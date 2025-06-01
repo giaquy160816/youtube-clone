@@ -1,23 +1,30 @@
-// ✅ 2. Middleware kiểm tra login (Next.js middleware.ts)
-// file: middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-import { NextRequest, NextResponse } from "next/server";
-import { isProtectedRoute } from "@/lib/auth-routes";
+// Các route cần bảo vệ (chỉ cho phép đã đăng nhập)
+const protectedRoutes = ['/dashboard', '/profile', '/settings'];
 
-export function middleware(req: NextRequest) {
-    const token = req.cookies.get("access_token")?.value;
-    const url = req.nextUrl.clone();
+// Các route chỉ cho phép nếu chưa login
+const guestOnlyRoutes = ['/login', '/register'];
 
-    console.log('token', token);
+export function middleware(request: NextRequest) {
+    const accessToken = request.cookies.get('access_token')?.value;
+    const pathname = request.nextUrl.pathname;
 
-    if (isProtectedRoute(req.nextUrl.pathname) && !token) {
-        url.pathname = "/login";
-        return NextResponse.redirect(url);
+    // Nếu đang login mà vào /login thì redirect về dashboard
+    if (guestOnlyRoutes.includes(pathname) && accessToken) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
+    // Nếu vào route cần auth mà chưa có token → redirect login
+    if (protectedRoutes.includes(pathname) && !accessToken) {
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    // Cho phép tiếp tục
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/((?!api|_next|favicon.ico).*)"], // áp dụng cho tất cả route ngoài static/api
+    matcher: ['/dashboard', '/profile', '/settings', '/login', '/register'],
 };
