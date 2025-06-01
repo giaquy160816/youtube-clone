@@ -1,11 +1,10 @@
-// ✅ 4. Hàm gọi API có sẵn token
-// file: lib/fetcher.ts
+// ✅ lib/fetcher.ts
 
-export async function api<T = any>(
+export async function api<TResponse = unknown, TRequest = unknown>(
     url: string,
     options: RequestInit = {},
-    body?: any
-): Promise<T> {
+    body?: TRequest
+): Promise<TResponse> {
     const token = localStorage.getItem("access_token");
 
     const res = await fetch(url, {
@@ -25,8 +24,3 @@ export async function api<T = any>(
 
     return res.json();
 }
-
-
-// 👉 Dùng:
-// const data = await api('/backend/auth/me');
-// const updated = await api('/backend/profile/update', { method: 'POST' }, { name: 'New name' });

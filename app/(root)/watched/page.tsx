@@ -52,13 +52,22 @@ export default function WatchedPage() {
     const [visibleCount, setVisibleCount] = useState(3);
     const [loadingMore, setLoadingMore] = useState(false);
 
+    const [isMounted, setIsMounted] = useState(false);
+
     useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (!isMounted) return;
         show("Đang tải danh sách video nef...");
         const timeout = setTimeout(() => {
             hide();
         }, 1500);
-        return () => clearTimeout(timeout);
-    }, []);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [isMounted]);
 
     const handleLoadMore = () => {
         setLoadingMore(true);

@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
     trailingSlash: false,
     images: {
-        domains: ['picsum.photos', 'i.ytimg.com'],
+        domains: ['picsum.photos', 'i.ytimg.com', 'i.pravatar.cc'],
     },
     rewrites: async () => [
         {

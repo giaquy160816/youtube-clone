@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import {
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -29,9 +28,9 @@ export default function LoginPage() {
         if (isAuthenticated) {
             router.replace('/dashboard');
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, router]); // ✅ FIXED
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -39,9 +38,7 @@ export default function LoginPage() {
         try {
             const res = await fetch(loginEndpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
 
@@ -58,15 +55,17 @@ export default function LoginPage() {
             localStorage.setItem('refresh_token', data.token.refreshToken);
             document.cookie = `access_token=${data.token.accessToken}; path=/`;
 
-            // 👉 Điều hướng sau login
             router.push('/dashboard');
-
-        } catch (err: any) {
-            try {
-                const parsed = JSON.parse(err.message);
-                setError(Array.isArray(parsed) ? parsed : [parsed]);
-            } catch (_) {
-                setError(err.message);
+        } catch (err: unknown) { // ✅ FIXED
+            if (err instanceof Error) {
+                try {
+                    const parsed = JSON.parse(err.message);
+                    setError(Array.isArray(parsed) ? parsed : [parsed]);
+                } catch {
+                    setError(err.message);
+                }
+            } else {
+                setError('Có lỗi không xác định xảy ra.');
             }
         } finally {
             setLoading(false);
@@ -87,24 +86,24 @@ export default function LoginPage() {
                         <div className="space-y-1">
                             <Label htmlFor="email">Email</Label>
                             <Input
+                                id="email"
+                                type="email"
+                                placeholder="you@example.com"
+                                autoComplete="off"
+                                required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                id="email"
-                                placeholder="you@example.com"
-                                type="email"
-                                required
-                                autoComplete="off"
                             />
                         </div>
                         <div className="space-y-1">
                             <Label htmlFor="password">Mật khẩu</Label>
                             <Input
+                                id="password"
+                                type="password"
+                                placeholder="Mật khẩu"
+                                required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                id="password"
-                                placeholder="Mật khẩu"
-                                type="password"
-                                required
                             />
                         </div>
 
@@ -114,17 +113,13 @@ export default function LoginPage() {
                                     <li key={i}>• {msg}</li>
                                 ))}
                             </ul>
-                        ) : (
-                            error && <p className="text-red-600 text-sm">{error}</p>
-                        )}
+                        ) : error ? (
+                            <p className="text-red-600 text-sm">{error}</p>
+                        ) : null}
 
                         <Button
                             type="submit"
-                            className="w-full h-10 rounded-md font-semibold bg-primary text-primary-foreground 
-                         hover:bg-primary/90 focus-visible:outline-none 
-                         focus-visible:ring-2 focus-visible:ring-ring 
-                         focus-visible:ring-offset-2 focus-visible:ring-offset-background 
-                         transition-colors shadow-sm cursor-pointer"
+                            className="w-full h-10 rounded-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition"
                             disabled={loading}
                         >
                             {loading ? "Đang đăng nhập..." : "Đăng nhập"}
@@ -142,7 +137,7 @@ export default function LoginPage() {
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full gap-2 cursor-pointer"
+                            className="w-full gap-2"
                             onClick={async () => {
                                 const { error } = await supabase.auth.signInWithOAuth({
                                     provider: 'google',
@@ -159,12 +154,6 @@ export default function LoginPage() {
                             Đăng nhập với Google
                         </Button>
                     </CardContent>
-
-                    {/* <CardFooter className="flex justify-center">
-                        <Button variant="link" className="text-accent text-sm">
-                            Quên mật khẩu?
-                        </Button>
-                    </CardFooter> */}
                 </form>
             </Card>
         </div>

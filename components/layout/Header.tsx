@@ -1,10 +1,6 @@
 // components/layout/Header.tsx
 "use client";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import UserMenu from "@/components/layout/UserMenu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Youtube } from "lucide-react";
 import { FaSearch } from 'react-icons/fa';
 
