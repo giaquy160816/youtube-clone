@@ -13,11 +13,11 @@ export function Header() {
                 <span>YouTube Premium</span>
             </div>
             <form className="flex w-full max-w-xl mx-6">
-                <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden">
+                <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden dark:border-secondary">
                     <input
                         type="text"
                         placeholder="Tìm kiếm video..."
-                        className="flex-1 px-4 py-2 bg-transparent text-sm outline-none"
+                        className="flex-1 px-4 py-2 bg-transparent text-sm outline-none "
                     />
                     <button
                         type="submit"

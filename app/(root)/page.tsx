@@ -1,20 +1,45 @@
+"use client";
 import VideoList from '@/components/video/list-video';
 import type { Video } from '@/components/video/item-video';
-
-const mockVideos: Video[] = Array.from({ length: 15 }).map((_, i) => ({
-    id: i + 1,
-    title: `Video số ${i + 1}`,
-    thumbnail: `https://picsum.photos/seed/${i + 1}/400/225`,
-    author: `Tác giả ${i + 1}`,
-    views: Math.floor(Math.random() * 100000),
-    createdAt: new Date().toISOString(),
-}));
+import { api } from '@/lib/api';
+import { Suspense, useEffect, useState } from 'react';
 
 export default function HomePage() {
+    const [videos, setVideos] = useState<Video[]>([]);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(9);
+    const [q, setQ] = useState('video');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const url = `/home/video?q=${q}&page=${page}&limit=${limit}`;
+                const response = await api.get(url);
+                const formattedVideos: Video[] = response.data.map((video: any) => ({
+                    id: video.id,
+                    title: video.title,
+                    thumbnail: video.image,
+                    author: video.author,
+                    views: video.views,
+                    createdAt: video.createdAt,
+                    avatar: video.avatar,
+                }));
+                setVideos(formattedVideos);
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+            }
+        };
+        fetchData();
+        
+    }, []);
+    console.log('>>> videos', videos);
+    
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-semibold mb-6">Video mới nhất 12</h1>
-            <VideoList videos={mockVideos} />
-        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+            <div className="p-4">
+                <h1 className="text-2xl font-semibold mb-6">Video mới nhất</h1>
+                <VideoList videos={videos} />
+            </div>
+        </Suspense>
     );
 }

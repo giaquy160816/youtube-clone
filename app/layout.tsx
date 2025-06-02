@@ -7,14 +7,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "YouTube Clone",
-    description: "Next.js 14 + Tailwind + Shadcn",
+    description: "Next.js 15 + Tailwind + Shadcn",
 };
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default function RootLayout({ children, }: { children: React.ReactNode; }) {
+
     return (
         <html lang="en">
             <body className={`${inter.className} relative isolate`}>

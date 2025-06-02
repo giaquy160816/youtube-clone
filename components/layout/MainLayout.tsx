@@ -2,9 +2,9 @@
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({ children, isDark }: { children: React.ReactNode, isDark: boolean }) {
     return (
-        <div className="min-h-screen bg-background text-foreground flex">
+        <div className={`min-h-screen bg-background text-foreground flex ${isDark ? 'dark' : ''}`}>
             <Sidebar />
             <div className="flex-1 flex flex-col">
                 <Header />
