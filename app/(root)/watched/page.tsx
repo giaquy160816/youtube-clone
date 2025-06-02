@@ -1,8 +1,8 @@
 'use client';
 
 import VideoList from "@/components/video/list-video";
-import { useEffect, useState, useRef } from "react";
-import { useGlobalLoading } from "@/components/loading/loading-context";
+import { useState } from "react";
+import { useLoadingOnce } from "@/hooks/useLoadingOnce";
 
 const watchedVideos = [
     {
@@ -50,22 +50,7 @@ const watchedVideos = [
 export default function WatchedPage() {
     const [visibleCount, setVisibleCount] = useState(3);
     const [loadingMore, setLoadingMore] = useState(false);
-    
-    const { show, hide } = useGlobalLoading();
-    const isFirstRender = useRef(true);
-
-    useEffect(() => {
-        if (isFirstRender.current) {
-            show("Đang tải danh sách video nef...");
-            const timeout = setTimeout(() => {
-                hide();
-            }, 500);
-            isFirstRender.current = false;
-            return () => {
-                clearTimeout(timeout);
-            };
-        }
-    }, [show, hide]);
+    useLoadingOnce('Đang tải danh sách video nef...', 1500);
 
     const handleLoadMore = () => {
         setLoadingMore(true);

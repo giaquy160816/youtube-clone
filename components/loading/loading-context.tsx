@@ -1,4 +1,4 @@
-// lib/loading-context.tsx
+// components/loading/loading-context.tsx
 'use client';
 
 import { createContext, useContext, useState } from 'react';
