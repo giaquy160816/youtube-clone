@@ -13,7 +13,7 @@ const mockVideos: Video[] = Array.from({ length: 15 }).map((_, i) => ({
 export default function HomePage() {
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-semibold mb-6">Video mới nhất 10</h1>
+            <h1 className="text-2xl font-semibold mb-6">Video mới nhất 11</h1>
             <VideoList videos={mockVideos} />
         </div>
     );
