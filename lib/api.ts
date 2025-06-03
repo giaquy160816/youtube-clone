@@ -1,8 +1,20 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
-export const loginEndpoint = `${API_BASE_URL}/backend/auth/login`;
+import type { ApiResponse } from '@/types/api';
+
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+export const API_ENDPOINTS = {
+    auth: {
+        login: '/backend/auth/login',
+        loginGoogle: '/backend/auth/login-google-supabase',
+    },
+    video: {
+        list: '/home/video',
+        detail: (id: string) => `/home/video/${id}`,
+    },
+} as const;
 
 export const api = {
-    async get(endpoint: string) {
+    async get<T>(endpoint: string): Promise<ApiResponse<T>> {
         const response = await fetch(`${API_BASE_URL}${endpoint}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -10,7 +22,7 @@ export const api = {
         return response.json();
     },
     
-    async post(endpoint: string, data: any) {
+    async post<T, D = unknown>(endpoint: string, data: D): Promise<ApiResponse<T>> {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'POST',
             headers: {
@@ -24,7 +36,7 @@ export const api = {
         return response.json();
     },
     
-    async put(endpoint: string, data: any) {
+    async put<T, D = unknown>(endpoint: string, data: D): Promise<ApiResponse<T>> {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'PUT',
             headers: {
@@ -38,7 +50,7 @@ export const api = {
         return response.json();
     },
     
-    async delete(endpoint: string) {
+    async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'DELETE',
         });

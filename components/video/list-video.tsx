@@ -1,13 +1,5 @@
 import VideoCard from "./item-video";
-
-export type Video = {
-    id: number;
-    title: string;
-    thumbnail: string;
-    author: string;
-    views: number;
-    createdAt: string;
-};
+import type { Video } from '@/types/video';
 
 type Props = {
     videos: Video[];

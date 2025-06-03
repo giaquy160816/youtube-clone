@@ -1,44 +1,54 @@
 "use client";
 import VideoList from '@/components/video/list-video';
-import type { Video } from '@/components/video/item-video';
+import type { Video, VideoResponse } from '@/types/video';
+import type { VideoListParams } from '@/types/api';
 import { api } from '@/lib/api';
 import { Suspense, useEffect, useState } from 'react';
 
+const defaultParams: VideoListParams = {
+    page: 1,
+    limit: 9,
+    q: 'video',
+} as const;
+
 export default function HomePage() {
     const [videos, setVideos] = useState<Video[]>([]);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(9);
-    const [q, setQ] = useState('video');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const url = `/home/video?q=${q}&page=${page}&limit=${limit}`;
-                const response = await api.get(url);
-                const formattedVideos: Video[] = response.data.map((video: any) => ({
+                setLoading(true);
+                const url = `/home/video?q=${defaultParams.q}&page=${defaultParams.page}&limit=${defaultParams.limit}`;
+                const response = await api.get<VideoResponse[]>(url);
+                const formattedVideos = response.data.map((video) => ({
                     id: video.id,
                     title: video.title,
-                    thumbnail: video.image,
+                    image: video.image,
                     author: video.author,
                     views: video.views,
                     createdAt: video.createdAt,
                     avatar: video.avatar,
-                }));
+                })) satisfies Video[];
                 setVideos(formattedVideos);
             } catch (error) {
                 console.error('Error fetching videos:', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
-        
     }, []);
-    console.log('>>> videos', videos);
-    
+
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <div className="p-4">
                 <h1 className="text-2xl font-semibold mb-6">Video mới nhất</h1>
-                <VideoList videos={videos} />
+                {loading ? (
+                    <div>Loading...</div>
+                ) : (
+                    <VideoList videos={videos} />
+                )}
             </div>
         </Suspense>
     );

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,12 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { loginEndpoint } from '@/lib/api';
+import { API_ENDPOINTS, api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from "react-icons/fc";
 import { supabase } from '@/lib/supabase-client';
 import { useIsAuthenticated } from '@/hooks/useIsAuthenticated';
+import type { AuthResponse } from '@/types/auth';
 
 export default function LoginPage() {
     const isAuthenticated = useIsAuthenticated();
@@ -22,7 +23,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | string[]>('');
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -30,43 +31,26 @@ export default function LoginPage() {
         }
     }, [isAuthenticated, router]); // ✅ FIXED
 
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
         try {
-            const res = await fetch(loginEndpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+            const response = await api.post<AuthResponse>(API_ENDPOINTS.auth.login, {
+                email,
+                password,
             });
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(
-                    Array.isArray(data.message) ? data.message.join(', ') : data.message || 'Lỗi đăng nhập'
-                );
-            }
-
-            // ✅ Lưu token sau khi login thành công
-            localStorage.setItem('access_token', data.token.accessToken);
-            localStorage.setItem('refresh_token', data.token.refreshToken);
-            document.cookie = `access_token=${data.token.accessToken}; path=/`;
-
+            // Handle successful login
+            localStorage.setItem('access_token', response.data.token.accessToken);
+            localStorage.setItem('refresh_token', response.data.token.refreshToken);
+            document.cookie = `access_token=${response.data.token.accessToken}; path=/`;
+            
             router.push('/dashboard');
-        } catch (err: unknown) { // ✅ FIXED
-            if (err instanceof Error) {
-                try {
-                    const parsed = JSON.parse(err.message);
-                    setError(Array.isArray(parsed) ? parsed : [parsed]);
-                } catch {
-                    setError(err.message);
-                }
-            } else {
-                setError('Có lỗi không xác định xảy ra.');
-            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            setError('Đăng nhập thất bại. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -81,7 +65,7 @@ export default function LoginPage() {
                     </CardTitle>
                 </CardHeader>
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">
                         <div className="space-y-1">
                             <Label htmlFor="email">Email</Label>
@@ -107,15 +91,11 @@ export default function LoginPage() {
                             />
                         </div>
 
-                        {Array.isArray(error) ? (
-                            <ul className="text-red-600 text-sm space-y-1">
-                                {error.map((msg, i) => (
-                                    <li key={i}>• {msg}</li>
-                                ))}
-                            </ul>
-                        ) : error ? (
-                            <p className="text-red-600 text-sm">{error}</p>
-                        ) : null}
+                        {error && (
+                            <div className="text-red-600 text-sm">
+                                {error}
+                            </div>
+                        )}
 
                         <Button
                             type="submit"
