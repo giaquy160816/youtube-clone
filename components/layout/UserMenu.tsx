@@ -57,9 +57,9 @@ export function UserMenu() {
                 <DropdownMenuItem onClick={() => router.push("/profile")}>Hồ sơ</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/settings")}>Cài đặt</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => {
+                <DropdownMenuItem className="cursor-pointer" onClick={() => {
                     localStorage.clear();
-                    router.push("/login");
+                    router.push("/logout");
                 }}>Đăng xuất</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

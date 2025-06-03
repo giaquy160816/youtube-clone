@@ -1,5 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,15 +13,17 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { useState, useEffect } from "react";
-import { API_ENDPOINTS, api } from '@/lib/api';
-import { useRouter } from 'next/navigation';
-import { FcGoogle } from "react-icons/fc";
-import { supabase } from '@/lib/supabase-client';
-import { useIsAuthenticated } from '@/hooks/useIsAuthenticated';
+
+import { API_ENDPOINTS } from "@/lib/api/end-points";
+import { apiPost } from '@/lib/api/fetcher';
+import { supabase } from '@/lib/auth/supabase-client';
 import type { AuthResponse } from '@/types/auth';
 
+import { useIsAuthenticated } from '@/hooks/useIsAuthenticated';
+import { useLoginHandler } from '@/hooks/useLoginHandler';
+
 export default function LoginPage() {
+    const handleLogin = useLoginHandler();
     const isAuthenticated = useIsAuthenticated();
     const router = useRouter();
     const [email, setEmail] = useState('');
@@ -29,7 +35,7 @@ export default function LoginPage() {
         if (isAuthenticated) {
             router.replace('/dashboard');
         }
-    }, [isAuthenticated, router]); // ✅ FIXED
+    }, [isAuthenticated, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,17 +43,11 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const response = await api.post<AuthResponse>(API_ENDPOINTS.auth.login, {
-                email,
-                password,
-            });
-
-            // Handle successful login
-            localStorage.setItem('access_token', response.data.token.accessToken);
-            localStorage.setItem('refresh_token', response.data.token.refreshToken);
-            document.cookie = `access_token=${response.data.token.accessToken}; path=/`;
-            
-            router.push('/dashboard');
+            const response = await apiPost<AuthResponse, { email: string; password: string }>(
+                API_ENDPOINTS.auth.login,
+                { email, password }
+            );
+            handleLogin(response);
         } catch (error) {
             console.error('Login failed:', error);
             setError('Đăng nhập thất bại. Vui lòng thử lại.');

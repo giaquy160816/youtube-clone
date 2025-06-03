@@ -1,3 +1,4 @@
+// types/page.ts
 /**
  * Base type for page props
  */

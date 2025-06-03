@@ -10,9 +10,10 @@ export type AuthToken = {
  * Auth response type
  */
 export type AuthResponse = {
-    token: AuthToken;
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
     user: {
-        id: string;
         email: string;
         fullname: string;
         avatar?: string;

@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { supabase } from '@/lib/supabase-client';
-import { loginWithGoogleToken } from '@/lib/login-google';
+import { supabase } from '@/lib/auth/supabase-client';
+import { loginWithGoogleToken } from '@/lib/auth/login-google';
 import { useLoginHandler } from '@/hooks/useLoginHandler';
 
 export default function AuthCallback() {
-    const handleLogin = useLoginHandler(); // ✅ sử dụng custom hook
+    const handleLogin = useLoginHandler();
 
     useEffect(() => {
         const handleOAuthRedirect = async () => {
@@ -17,13 +17,17 @@ export default function AuthCallback() {
                 return;
             }
 
-            if (data?.session?.provider_token) {
+            const providerToken = data?.session?.provider_token;
+
+            if (providerToken) {
                 try {
-                    const res = await loginWithGoogleToken(data.session.provider_token);
-                    handleLogin(res); // ✅ gọi logic login thành công
+                    const res = await loginWithGoogleToken(providerToken);
+                    handleLogin(res);
                 } catch (err) {
                     console.error('❌ Gửi token tới NestJS thất bại:', err);
                 }
+            } else {
+                console.warn('❗ Không tìm thấy provider_token trong session.');
             }
         };
 

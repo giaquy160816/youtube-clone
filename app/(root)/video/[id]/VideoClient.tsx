@@ -1,9 +1,10 @@
-"use client";
+// app/(root)/video/[id]/VideoClient.tsx
+'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { VideoDetail } from '@/types/video';
-import { getVideoDetail } from '@/lib/get-video-detail';
+import { getVideoDetail } from '@/lib/videos/get-video-detail';
 
 export default function VideoClient({ id }: { id: string }) {
     const [video, setVideo] = useState<VideoDetail | null>(null);
@@ -13,8 +14,6 @@ export default function VideoClient({ id }: { id: string }) {
         const fetchVideo = async () => {
             try {
                 const response = await getVideoDetail(id);
-                console.log('>>> response', response);
-                
                 setVideo(response);
             } catch (error) {
                 console.error('Error fetching video:', error);
@@ -25,7 +24,7 @@ export default function VideoClient({ id }: { id: string }) {
 
         fetchVideo();
     }, [id]);
-    
+
     if (loading) return <div className="p-4">Đang tải...</div>;
     if (!video) return <div className="p-4">Không tìm thấy video</div>;
 

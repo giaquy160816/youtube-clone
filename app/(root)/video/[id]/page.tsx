@@ -1,16 +1,18 @@
+// app/(root)/video/[id]/page.tsx
+
 import type { Metadata } from 'next';
-import VideoClient from '@/app/(root)/video/[id]/VideoClient';
-import { getVideoDetail } from '@/lib/get-video-detail';
+import VideoClient from './VideoClient';
+import { getVideoDetail } from '@/lib/videos/get-video-detail';
 
 type Props = {
-    params: Promise<{ id: string }>
-}
+    params: Promise<{ id: string }>;
+    searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
 
-
-// ✅ Nếu muốn SEO từ video thật
+// ✅ SEO metadata từ nội dung video
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
-    const video = await getVideoDetail(id.toString());
+    const video = await getVideoDetail(id);
 
     return {
         title: video.title,
@@ -21,8 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-// ✅ Server component
-export default async function Page({ params }: Props & { params: Promise<{ id: string }> }) {
+// ✅ Server component – truyền `id` sang client
+export default async function Page({ params }: Props) {
     const { id } = await params;
     return <VideoClient id={id} />;
 }

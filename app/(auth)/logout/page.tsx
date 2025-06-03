@@ -1,4 +1,3 @@
-// app/logout/page.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -8,11 +7,9 @@ export default function LogoutPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // ✅ Xóa token/localStorage ở đây
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user'); // nếu có lưu
-
-        // ✅ Chuyển hướng về trang chủ
+        document.cookie = 'access_token=; path=/; max-age=0';
+        document.cookie = 'expires_in=; path=/; max-age=0';
+        // ✅ Chuyển hướng
         router.replace('/');
     }, [router]);
 

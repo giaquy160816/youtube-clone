@@ -1,9 +1,11 @@
-"use client";
+'use client';
+
+import { useEffect, useState } from 'react';
+import { apiGet } from '@/lib/api/fetcher';
+import { API_ENDPOINTS } from '@/lib/api/end-points';
 import VideoList from '@/components/video/list-video';
-import type { Video, VideoResponse } from '@/types/video';
-import type { VideoListParams } from '@/types/api';
-import { api } from '@/lib/api';
-import { Suspense, useEffect, useState } from 'react';
+import type { Video } from '@/types/video'; 
+import type { VideoListParams, ApiResponse } from '@/types/api';
 
 const defaultParams: VideoListParams = {
     page: 1,
@@ -16,12 +18,13 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchVideos = async () => {
             try {
                 setLoading(true);
-                const url = `/home/video?q=${defaultParams.q}&page=${defaultParams.page}&limit=${defaultParams.limit}`;
-                const response = await api.get<VideoResponse[]>(url);
-                const formattedVideos = response.data.map((video) => ({
+                const url = `${API_ENDPOINTS.video.list}?q=${defaultParams.q}&page=${defaultParams.page}&limit=${defaultParams.limit}`;
+                const res = await apiGet<ApiResponse<Video[]>>(url);
+                console.log(res);
+                const formattedVideos: Video[] = res.data.map((video: Video) => ({
                     id: video.id,
                     title: video.title,
                     image: video.image,
@@ -29,27 +32,27 @@ export default function HomePage() {
                     views: video.views,
                     createdAt: video.createdAt,
                     avatar: video.avatar,
-                })) satisfies Video[];
+                }));
+
                 setVideos(formattedVideos);
-            } catch (error) {
-                console.error('Error fetching videos:', error);
+            } catch (err) {
+                console.error('❌ Error fetching videos:', err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
+
+        fetchVideos();
     }, []);
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <div className="p-4">
-                <h1 className="text-2xl font-semibold mb-6">Video mới nhất</h1>
-                {loading ? (
-                    <div>Loading...</div>
-                ) : (
-                    <VideoList videos={videos} />
-                )}
-            </div>
-        </Suspense>
+        <div className="p-4">
+            <h1 className="text-2xl font-semibold mb-6">Video mới nhất</h1>
+            {loading ? (
+                <div>Đang tải danh sách video...</div>
+            ) : (
+                <VideoList videos={videos} />
+            )}
+        </div>
     );
 }
