@@ -8,42 +8,47 @@ const watchedVideos = [
     {
         id: 111,
         title: "Video bạn đã xem 1",
-        thumbnail: "https://picsum.photos/seed/w1/400/225",
+        image: "https://picsum.photos/seed/w1/400/225",
         author: "Tác giả A",
         views: 13000,
         createdAt: new Date().toISOString(),
+        avatar: "https://picsum.photos/seed/a1/40/40"
     },
     {
         id: 222,
         title: "Video bạn đã xem 2",
-        thumbnail: "https://picsum.photos/seed/w2/400/225",
+        image: "https://picsum.photos/seed/w2/400/225",
         author: "Tác giả B",
         views: 8700,
         createdAt: new Date().toISOString(),
+        avatar: "https://picsum.photos/seed/a2/40/40"
     },
     {
         id: 333,
         title: "Video bạn đã xem 3",
-        thumbnail: "https://picsum.photos/seed/w3/400/225",
+        image: "https://picsum.photos/seed/w3/400/225",
         author: "Tác giả C",
         views: 42000,
         createdAt: new Date().toISOString(),
+        avatar: "https://picsum.photos/seed/a3/40/40"
     },
     {
         id: 444,
         title: "Video bạn đã xem 4",
-        thumbnail: "https://picsum.photos/seed/w4/400/225",
+        image: "https://picsum.photos/seed/w4/400/225",
         author: "Tác giả D",
         views: 21000,
         createdAt: new Date().toISOString(),
+        avatar: "https://picsum.photos/seed/a4/40/40"
     },
     {
         id: 555,
         title: "Video bạn đã xem 5",
-        thumbnail: "https://picsum.photos/seed/w5/400/225",
+        image: "https://picsum.photos/seed/w5/400/225",
         author: "Tác giả E",
         views: 33000,
         createdAt: new Date().toISOString(),
+        avatar: "https://picsum.photos/seed/a5/40/40"
     },
 ];
 

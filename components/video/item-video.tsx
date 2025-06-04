@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Video } from '@/types/video';
+import type { VideoResponse } from '@/types/video';
 
-export default function VideoCard({ video }: { video: Video }) {
+export default function VideoCard({ video }: { video: VideoResponse }) {
     return (
         <div className="bg-card">
             <figure className="relative aspect-video w-full rounded-xl overflow-hidden mb-2">

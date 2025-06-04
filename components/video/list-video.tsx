@@ -1,8 +1,8 @@
 import VideoCard from "./item-video";
-import type { Video } from '@/types/video';
+import type { VideoResponse } from '@/types/video';
 
 type Props = {
-    videos: Video[];
+    videos: VideoResponse[];
 };
 
 export default function VideoList({ videos }: Props) {
