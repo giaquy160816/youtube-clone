@@ -8,7 +8,7 @@ export const API_ENDPOINTS = {
         loginGoogle: '/backend/auth/login-google-supabase',
     },
     video: {
-        list: '/home/video',
-        detail: (id: string) => `/home/video/${id}`,
+        list: '/video',
+        detail: (id: string) => `/video/${id}`,
     },
 } as const;

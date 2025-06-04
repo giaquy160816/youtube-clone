@@ -1,14 +1,5 @@
-/**
- * Auth token response type
- */
-export type AuthToken = {
-    accessToken: string;
-    refreshToken: string;
-};
+// types/auth.ts
 
-/**
- * Auth response type
- */
 export type AuthResponse = {
     accessToken: string;
     refreshToken: string;

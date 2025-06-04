@@ -4,27 +4,27 @@ import { useEffect, useState } from 'react';
 import { apiGet } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import VideoList from '@/components/video/list-video';
-import type { Video } from '@/types/video'; 
+import type { VideoResponse } from '@/types/video'; 
 import type { VideoListParams, ApiResponse } from '@/types/api';
 
 const defaultParams: VideoListParams = {
     page: 1,
     limit: 9,
-    q: 'video',
+    q: '',
 } as const;
 
 export default function HomePage() {
-    const [videos, setVideos] = useState<Video[]>([]);
+    const [videos, setVideos] = useState<VideoResponse[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchVideos = async () => {
+        (async () => {
             try {
                 setLoading(true);
                 const url = `${API_ENDPOINTS.video.list}?q=${defaultParams.q}&page=${defaultParams.page}&limit=${defaultParams.limit}`;
-                const res = await apiGet<ApiResponse<Video[]>>(url);
+                const res = await apiGet<ApiResponse<VideoResponse[]>>(url);
                 console.log(res);
-                const formattedVideos: Video[] = res.data.map((video: Video) => ({
+                const formattedVideos: VideoResponse[] = res.data.map((video: VideoResponse) => ({
                     id: video.id,
                     title: video.title,
                     image: video.image,
@@ -40,9 +40,7 @@ export default function HomePage() {
             } finally {
                 setLoading(false);
             }
-        };
-
-        fetchVideos();
+        })();
     }, []);
 
     return (

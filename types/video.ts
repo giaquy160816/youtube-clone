@@ -1,21 +1,6 @@
-/**
- * Represents a video in the application
- */
-export type Video = {
-    id: number;
-    title: string;
-    description?: string;
-    image?: string;
-    path?: string;
-    author?: string;
-    views?: number;
-    createdAt?: string;
-    avatar?: string;
-};
+// types/video.ts
 
-/**
- * Represents the raw video data from the API response
- */
+
 export type VideoResponse = {
     id: number;
     title: string;
@@ -26,17 +11,9 @@ export type VideoResponse = {
     avatar: string;
 };
 
-/**
- * Represents detailed video information
- */
-export type VideoDetail = {
-    id: number;
-    title: string;
-    description: string;
-    image: string;
-    path: string;
-    author: string;
+
+export type VideoDetail = VideoResponse & {
     views: number;
-    createdAt: string;
-    avatar: string;
+    description: string;
+    path: string;
 }; 
