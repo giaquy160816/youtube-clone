@@ -6,6 +6,7 @@ export default function VideoCard({ video }: { video: Video }) {
     return (
         <div className="bg-card">
             <figure className="relative aspect-video w-full rounded-xl overflow-hidden mb-2">
+            <Link href={`/video/${video.id}`}>
                 <Image
                     src={video.image || ''}
                     alt={video.title}
@@ -13,6 +14,7 @@ export default function VideoCard({ video }: { video: Video }) {
                     className="object-cover"
                     loading="lazy"
                 />
+                </Link>
             </figure>
             <div className="flex items-start gap-3">
                 <Image
