@@ -8,8 +8,9 @@ export const getUserInfo = async () => {
         console.log('%c📦 Calling /me from getUserInfo()', 'color: green');
 
         return res;
-    } catch (err: any) {
-        notify.error(err.message || 'Lỗi lấy thông tin người dùng');
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Lỗi lấy thông tin người dùng';
+        notify.error(errorMessage);
     }
 }
 

@@ -23,7 +23,6 @@ export default function HomePage() {
                 setLoading(true);
                 const url = `${API_ENDPOINTS.video.list}?q=${defaultParams.q}&page=${defaultParams.page}&limit=${defaultParams.limit}`;
                 const res = await apiGet<ApiResponse<VideoResponse[]>>(url);
-                console.log(res);
                 const formattedVideos: VideoResponse[] = res.data.map((video: VideoResponse) => ({
                     id: video.id,
                     title: video.title,

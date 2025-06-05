@@ -6,6 +6,8 @@ export const API_ENDPOINTS = {
     auth: {
         login: '/backend/auth/login',
         loginGoogle: '/backend/auth/login-google-supabase',
+        refreshToken: '/backend/auth/refresh-token',
+        logout: '/backend/auth/logout',
     },
     video: {
         list: '/video',

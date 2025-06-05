@@ -21,6 +21,7 @@ import type { AuthResponse } from '@/types/auth';
 
 import { useIsAuthenticated } from '@/hooks/useIsAuthenticated';
 import { useLoginHandler } from '@/hooks/useLoginHandler';
+import { toast } from "sonner";
 
 export default function LoginPage() {
     const handleLogin = useLoginHandler();
@@ -48,9 +49,9 @@ export default function LoginPage() {
                 { email, password }
             );
             handleLogin(response);
-        } catch (error) {
-            console.error('Login failed:', error);
-            setError('Đăng nhập thất bại. Vui lòng thử lại.');
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }

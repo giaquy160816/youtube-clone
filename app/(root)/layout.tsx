@@ -3,8 +3,10 @@
 import MainLayout from "@/components/layout/MainLayout";
 import { UserProvider } from "@/context/UserContext";
 import { useEffect, useState } from "react";
+import { useAuthCleaner } from "@/hooks/useAuthCleaner";
 
 export default function RootMainLayout({ children }: { children: React.ReactNode }) {
+    useAuthCleaner();
     const [isDark, setIsDark] = useState(false);
     useEffect(() => {
         const hour = new Date().getHours();
@@ -15,7 +17,7 @@ export default function RootMainLayout({ children }: { children: React.ReactNode
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function (registrations) {
-            for (let registration of registrations) {
+            for (const registration of registrations) {
                 registration.unregister();
             }
         });

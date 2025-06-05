@@ -1,8 +1,6 @@
 // components/layout/UserMenu.tsx
 'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,

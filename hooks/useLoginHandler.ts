@@ -1,25 +1,34 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import Cookies from 'js-cookie';
+import { PATH } from '@/lib/constants/paths';
 
 export function useLoginHandler() {
     const router = useRouter();
 
-    return (data: any) => {
-        const accessToken = data?.accessToken;
-        const expiresIn = data?.expiresIn || 3600;
-        const user = data?.user || {};
+    return async (data: {
+        accessToken: string;
+        refreshToken: string;
+        expiredAt?: number;
+        user: { [key: string]: any };
+    }) => {
+        const { accessToken, refreshToken, expiredAt = 3600, user } = data;
 
-        if (!accessToken) {
-            console.warn('❌ Token không hợp lệ:', data);
+        if (!accessToken || !user?.email) {
+            toast.warning('❌ Thiếu accessToken hoặc user');
             return;
         }
 
-        document.cookie = `access_token=${accessToken}; path=/; max-age=${expiresIn}; secure; samesite=lax`;
+        // Store in localStorage
+        localStorage.setItem('user_info', JSON.stringify(user));
+        localStorage.setItem('user_expired', expiredAt.toString());
 
-        if (user?.email) {
-            localStorage.setItem('user_info', JSON.stringify(user));
-        }
-        router.push('/dashboard');
+        // Store in cookies
+        Cookies.set('access_token', accessToken, { expires: expiredAt / 86400 }); // Convert seconds to days
+        Cookies.set('user_info', JSON.stringify(user), { expires: expiredAt / 86400 });
+
+        router.push(PATH.HOME);
     };
 }

@@ -20,7 +20,6 @@ export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
             <div className="flex items-center gap-2 text-lg font-semibold mx-auto md:mx-0">
                 <Link href={PATH.HOME} className="flex items-center gap-2">
                     <Youtube className="text-red-600" />
-                    <span className="sm:hidden">YouTube</span>
                 </Link>
 
             </div>

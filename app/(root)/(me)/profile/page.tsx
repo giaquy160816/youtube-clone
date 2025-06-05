@@ -47,8 +47,9 @@ const ProfilePage = () => {
             setUser(newUser);
             localStorage.setItem('user_info', JSON.stringify(newUser));
             notify.success(res.message || 'Cập nhật hồ sơ thành công');
-        } catch (err: any) {
-            notify.error(err.message || 'Lỗi cập nhật hồ sơ');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi cập nhật hồ sơ';
+            notify.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -65,8 +66,9 @@ const ProfilePage = () => {
             setAvatarPreview(getFullImageUrl(res.path || ''));
             setForm((prev) => ({ ...prev, avatar: res.path }));
             e.target.value = '';
-        } catch (err: any) {
-            notify.error(err.message || 'Lỗi upload ảnh');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi upload ảnh';
+            notify.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -158,6 +160,7 @@ const ProfilePage = () => {
                         name="fullname"
                         value={form.fullname}
                         onChange={handleChange}
+                        className="bg-white dark:bg-zinc-900 border dark:border-zinc-700 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
@@ -169,6 +172,7 @@ const ProfilePage = () => {
                         name="phone"
                         value={form.phone}
                         onChange={handleChange}
+                        className="bg-white dark:bg-zinc-900 border dark:border-zinc-700 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 

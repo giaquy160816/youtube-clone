@@ -35,6 +35,7 @@ export async function api<TResponse = unknown, TRequest = unknown>(
         ...options,
         method: options.method || (body ? 'POST' : 'GET'),
         headers,
+        credentials: 'include',
         body: body
             ? isFormData
                 ? (body as FormData)
