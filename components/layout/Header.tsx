@@ -1,34 +1,51 @@
-// components/layout/Header.tsx
 "use client";
 import UserMenu from "@/components/layout/UserMenu";
-import { Youtube } from "lucide-react";
-import { FaSearch } from 'react-icons/fa';
+import { Link, Youtube } from "lucide-react";
+import { FaSearch } from "react-icons/fa";
+import { Menu } from "lucide-react";
+import { PATH } from "@/lib/constants/paths";
 
-
-export function Header() {
+export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
     return (
-        <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-background">
-            <div className="font-semibold text-lg flex items-center gap-2">
-                <Youtube className="text-red-600" />
-                <span>YouTube Premium</span>
+        <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-background">
+            {/* Mobile: menu icon */}
+            <button
+                className="md:hidden text-gray-800"
+                onClick={toggleSidebar}
+            >
+                <Menu className="w-6 h-6" />
+            </button>
+
+            {/* Logo */}
+            <div className="flex items-center gap-2 text-lg font-semibold mx-auto md:mx-0">
+                <Link href={PATH.HOME} className="flex items-center gap-2">
+                    <Youtube className="text-red-600" />
+                    <span className="sm:hidden">YouTube</span>
+                </Link>
+
             </div>
-            <form className="flex w-full max-w-xl mx-6">
-                <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden x:border-secondary">
+
+            {/* Search form: hidden on mobile */}
+            <form className="hidden md:flex w-full max-w-xl mx-6">
+                <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden">
                     <input
                         type="text"
                         placeholder="Tìm kiếm video..."
-                        className="flex-1 px-4 py-2 bg-transparent text-sm outline-none "
+                        className="flex-1 px-4 py-2 bg-transparent text-sm outline-none"
                     />
                     <button
                         type="submit"
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 flex items-center justify-center cursor-pointer"
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 flex items-center justify-center"
                     >
                         <FaSearch className="text-white text-sm" />
                     </button>
                 </div>
             </form>
 
-            <UserMenu />
+            {/* User avatar */}
+            <div className="md:ml-0">
+                <UserMenu />
+            </div>
         </header>
     );
 }

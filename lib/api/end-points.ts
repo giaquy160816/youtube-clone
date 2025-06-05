@@ -11,4 +11,10 @@ export const API_ENDPOINTS = {
         list: '/video',
         detail: (id: string) => `/video/${id}`,
     },
+    common: {
+        uploadImage: '/backend/common/upload-image',
+    },
+    user: {
+        me: '/backend/user/me',
+    },
 } as const;

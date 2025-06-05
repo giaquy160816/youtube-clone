@@ -1,6 +1,7 @@
 "use client";
 
 import MainLayout from "@/components/layout/MainLayout";
+import { UserProvider } from "@/context/UserContext";
 import { useEffect, useState } from "react";
 
 export default function RootMainLayout({ children }: { children: React.ReactNode }) {
@@ -11,5 +12,17 @@ export default function RootMainLayout({ children }: { children: React.ReactNode
         const dark = hour >= 18 || hour < 6;
         setIsDark(dark);
     }, []);
-    return <MainLayout isDark={isDark}>{children}</MainLayout>;
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+                registration.unregister();
+            }
+        });
+    }
+    return (
+        <UserProvider>
+            <MainLayout isDark={isDark}>{children}</MainLayout>
+        </UserProvider>
+    );
 }

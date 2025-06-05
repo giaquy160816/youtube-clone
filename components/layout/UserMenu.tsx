@@ -1,3 +1,4 @@
+// components/layout/UserMenu.tsx
 'use client';
 
 import { useEffect, useState } from "react";
@@ -10,34 +11,22 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { PATH } from "@/lib/constants/paths";
+import { useUser } from "@/context/UserContext";
 
-type UserInfo = {
-    email: string;
-    fullname: string;
-    avatar?: string;
-};
+const getFullImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
 
 export function UserMenu() {
-    const router = useRouter();
-    const [user, setUser] = useState<UserInfo | null>(null);
-
-    useEffect(() => {
-        try {
-            const raw = localStorage.getItem("user_info");
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                setUser(parsed);
-            }
-        } catch (err) {
-            console.error("❌ Failed to parse user_info:", err);
-        }
-    }, []);
+    const { user } = useUser();
 
     if (!user) {
         return (
-            <Avatar onClick={() => router.push("/login")} className="cursor-pointer">
-                <AvatarFallback>?</AvatarFallback>
-            </Avatar>
+            <Link href={PATH.LOGIN}>
+                <Avatar className="cursor-pointer">
+                    <AvatarFallback>?</AvatarFallback>
+                </Avatar>
+            </Link>
         );
     }
 
@@ -45,7 +34,7 @@ export function UserMenu() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
-                    <AvatarImage src={user.avatar || ""} alt={user.fullname} />
+                    <AvatarImage src={getFullImageUrl(user.avatar || "")} alt={user.fullname} />
                     <AvatarFallback>{user.fullname.charAt(0)}</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
@@ -54,13 +43,27 @@ export function UserMenu() {
                     {user.fullname || user.email}
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/profile")}>Hồ sơ</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/settings")}>Cài đặt</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                    <Link href={PATH.PROFILE}>
+                        Cập nhật thông tin
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                    <Link href={PATH.VIDEO_MANAGE}>
+                        Video của tôi
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                    <Link href={PATH.VIDEO_POST}>
+                        Đăng video
+                    </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={() => {
-                    localStorage.clear();
-                    router.push("/logout");
-                }}>Đăng xuất</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                    <Link href={PATH.LOGOUT}>
+                        Đăng xuất
+                    </Link>
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );

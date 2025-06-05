@@ -1,19 +1,20 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { VideoResponse } from '@/types/video';
+import { PATH } from '@/lib/constants/paths';
 
 export default function VideoCard({ video }: { video: VideoResponse }) {
     return (
         <div className="bg-card">
             <figure className="relative aspect-video w-full rounded-xl overflow-hidden mb-2">
-            <Link href={`/video/${video.id}`}>
-                <Image
-                    src={video.image || ''}
-                    alt={video.title}
-                    fill
-                    className="object-cover"
-                    loading="lazy"
-                />
+                <Link href={PATH.VIDEO_DETAIL(video.id) || ''}>
+                    <Image
+                        src={video.image || ''}
+                        alt={video.title}
+                        fill
+                        className="object-cover"
+                        loading="lazy"
+                    />
                 </Link>
             </figure>
             <div className="flex items-start gap-3">
@@ -26,7 +27,7 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
                 />
                 <div>
                     <div className="text-lg font-semibold text-foreground">
-                        <Link href={`/video/${video.id}`}>
+                        <Link href={PATH.VIDEO_DETAIL(video.id) || ''}>
                             {video.title}
                         </Link>
                     </div>
