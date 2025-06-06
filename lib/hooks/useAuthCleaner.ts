@@ -6,6 +6,7 @@ import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { api } from '@/lib/api/fetcher';
 import { useLoginHandler } from './useLoginHandler';
 import type { AuthResponse } from '@/types/auth';
+import { notify } from '../utils/noti';
 
 export function useAuthCleaner() {
     const handleLogin = useLoginHandler();
@@ -34,12 +35,13 @@ export function useAuthCleaner() {
                         }
                     );
 
-                    if (response.accessToken) {
-                        await handleLogin(response);
+                    if ('accessToken' in response && 'user' in response) {
+                        await handleLogin(response as AuthResponse);
                         return;
                     }
                 } catch (error) {
                     console.warn('⚠️ Refresh token failed:', error);
+                    notify.error('Refresh token failed');
                 }
                 stopped = true;
             }

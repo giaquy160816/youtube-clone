@@ -10,6 +10,7 @@ import { useVideoUpload } from '@/lib/hooks/useVideoUpload'
 import { API_ENDPOINTS } from '@/lib/api/end-points'
 import { api } from '@/lib/api/fetcher'
 import { notify } from '@/lib/utils/noti'
+import Image from 'next/image'
 
 const PostVideoPage = () => {
     const [form, setForm] = useState({
@@ -20,10 +21,7 @@ const PostVideoPage = () => {
         isActive: true
     });
 
-    const [loading, setLoading] = useState(false);
-
     const [uploadProgress, setUploadProgress] = useState(0);
-
     const { 
         handleFileUpload: handleImageUpload, 
         loading: imageLoading,
@@ -54,7 +52,6 @@ const PostVideoPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('🧹 form', form);
-        setLoading(true);
         try {
             const res = await api(API_ENDPOINTS.video.post, { method: 'POST' }, form) as { message: string };
             console.log('🧹 res', res);
@@ -71,11 +68,7 @@ const PostVideoPage = () => {
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Lỗi đăng video';
             notify.error(errorMessage);
-        } finally {
-            setLoading(false);
         }
-        // TODO: Implement form submission logic
-        console.log('Form submitted:', form);
     };
 
     return (
@@ -142,7 +135,8 @@ const PostVideoPage = () => {
                             </div>
                             {imagePreview && (
                                 <div className="mt-2">
-                                    <img 
+                                    <Image
+                                        fill
                                         src={imagePreview} 
                                         alt="Preview" 
                                         className="max-h-40 rounded-md"

@@ -10,7 +10,6 @@ export interface UserInfo {
 
 export type AuthResponse = {
     accessToken: string;
-    refreshToken: string;
     expiresIn: number;
     user: UserInfo;
 }; 

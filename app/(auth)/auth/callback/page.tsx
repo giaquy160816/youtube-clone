@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { supabase } from '@/lib/auth/supabase-client';
 import { loginWithGoogleToken } from '@/lib/auth/login-google';
 import { useLoginHandler } from '@/lib/hooks/useLoginHandler';
+import { AuthResponse } from '@/types/auth';
+import { useRouter } from 'next/navigation';
 
 export default function AuthCallback() {
     const handleLogin = useLoginHandler();
-
+    const router = useRouter();
     useEffect(() => {
         const handleOAuthRedirect = async () => {
             const { data, error } = await supabase.auth.getSession();
@@ -22,8 +24,11 @@ export default function AuthCallback() {
             if (providerToken) {
                 try {
                     const res = await loginWithGoogleToken(providerToken);
-                    handleLogin(res);
+                    if (res) {
+                        handleLogin(res as AuthResponse);
+                    }
                 } catch (err) {
+                    router.push('/');
                     console.error('❌ Gửi token tới NestJS thất bại:', err);
                 }
             } else {
@@ -32,7 +37,7 @@ export default function AuthCallback() {
         };
 
         handleOAuthRedirect();
-    }, [handleLogin]);
+    }, [handleLogin, router]);
 
     return (
         <div className="min-h-screen flex items-center justify-center">

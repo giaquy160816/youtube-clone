@@ -6,6 +6,7 @@ import Image from 'next/image';
 import type { VideoDetail } from '@/types/video';
 import { getVideoDetail } from '@/features/videos/get-video-detail';
 import { getFullImageUrl } from '@/lib/utils/image';
+import { notify } from '@/lib/utils/noti';
 
 export default function VideoClient({ id }: { id: string }) {
     const [video, setVideo] = useState<VideoDetail | null>(null);
@@ -15,11 +16,10 @@ export default function VideoClient({ id }: { id: string }) {
         const fetchVideo = async () => {
             try {
                 const response = await getVideoDetail(id);
-                if ('error' in response) {
-                    // show UI: video not found + nút quay lại
-                  } else {
-                    // hiển thị nội dung video
-                  }
+                if (!response) {
+                    notify.error('Video not found');
+                    return;
+                }
                 setVideo(response);
             } catch (error) {
                 console.error('Error fetching video:', error);

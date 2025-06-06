@@ -22,6 +22,7 @@ import type { AuthResponse } from '@/types/auth';
 import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
 import { useLoginHandler } from '@/lib/hooks/useLoginHandler';
 import { toast } from "sonner";
+import { notify } from "@/lib/utils/noti";
 
 export default function LoginPage() {
     const handleLogin = useLoginHandler();
@@ -48,7 +49,11 @@ export default function LoginPage() {
                 API_ENDPOINTS.auth.login,
                 { email, password }
             );
-            handleLogin(response);
+            if ('error' in response) {
+                notify.error(response.error);
+                return;
+            }
+            handleLogin(response as AuthResponse);
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
             toast.error(errorMessage);

@@ -4,17 +4,17 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
 import { PATH } from '@/lib/constants/paths';
+import { UserInfo } from '@/types/auth';
 
 export function useLoginHandler() {
     const router = useRouter();
 
     return async (data: {
         accessToken: string;
-        refreshToken: string;
         expiredAt?: number;
-        user: { [key: string]: any };
+        user: UserInfo;
     }) => {
-        const { accessToken, refreshToken, expiredAt = 3600, user } = data;
+        const { accessToken, expiredAt = 3600, user } = data;
 
         if (!accessToken || !user?.email) {
             toast.warning('❌ Thiếu accessToken hoặc user');
