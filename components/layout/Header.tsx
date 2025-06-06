@@ -1,9 +1,9 @@
 "use client";
 import UserMenu from "@/components/layout/UserMenu";
-import { Link, Youtube } from "lucide-react";
 import { FaSearch } from "react-icons/fa";
 import { Menu } from "lucide-react";
 import { PATH } from "@/lib/constants/paths";
+import Link from "next/link";
 
 export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
     return (
@@ -17,11 +17,10 @@ export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
             </button>
 
             {/* Logo */}
-            <div className="flex items-center gap-2 text-lg font-semibold mx-auto md:mx-0">
-                <Link href={PATH.HOME} className="flex items-center gap-2">
-                    <Youtube className="text-red-600" />
+            <div className="flex items-center gap-2 mx-auto md:mx-0 text-primary dark:text-white">
+                <Link href={PATH.HOME}>
+                    <span className="text-lg font-semibold">Youtube Clone</span>
                 </Link>
-
             </div>
 
             {/* Search form: hidden on mobile */}

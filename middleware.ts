@@ -8,7 +8,6 @@ function match(path: string, routes: string[]) {
 }
 
 export function middleware(request: NextRequest) {
-    console.log('🧹 request', request);
     const accessToken = request.cookies.get('access_token')?.value;
     const path = request.nextUrl.pathname;
 

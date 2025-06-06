@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { supabase } from '@/lib/auth/supabase-client';
 import { loginWithGoogleToken } from '@/lib/auth/login-google';
-import { useLoginHandler } from '@/hooks/useLoginHandler';
+import { useLoginHandler } from '@/lib/hooks/useLoginHandler';
 
 export default function AuthCallback() {
     const handleLogin = useLoginHandler();

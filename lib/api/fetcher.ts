@@ -3,7 +3,7 @@
 import { API_BASE_URL } from '@/lib/api/end-points';
 
 function getAccessTokenFromCookie(): string | null {
-    if (typeof document === 'undefined') return null; // SSR không có document
+    if (typeof document === 'undefined') return null; // SSR guard
 
     const cookies = document.cookie.split(';');
     for (const cookie of cookies) {
@@ -13,12 +13,11 @@ function getAccessTokenFromCookie(): string | null {
     return null;
 }
 
-
 export async function api<TResponse = unknown, TRequest = unknown>(
     endpoint: string,
     options: RequestInit = {},
     body?: TRequest
-): Promise<TResponse> {
+): Promise<TResponse | { error: string }> {
     const token = getAccessTokenFromCookie();
 
     const headers: HeadersInit = {
@@ -27,36 +26,40 @@ export async function api<TResponse = unknown, TRequest = unknown>(
     };
 
     const isFormData = body instanceof FormData;
+
     if (!isFormData && !(headers as Record<string, string>)['Content-Type']) {
         (headers as Record<string, string>)['Content-Type'] = 'application/json';
     }
 
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        method: options.method || (body ? 'POST' : 'GET'),
-        headers,
-        credentials: 'include',
-        body: body
-            ? isFormData
-                ? (body as FormData)
-                : JSON.stringify(body)
-            : undefined,
-    });
+    try {
+        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            method: options.method || (body ? 'POST' : 'GET'),
+            headers,
+            credentials: 'include',
+            body: body
+                ? isFormData
+                    ? (body as FormData)
+                    : JSON.stringify(body)
+                : undefined,
+        });
 
-    if (!res.ok) {
-        let errorMessage = 'Request failed';
-        try {
-            const errorData = await res.json();
-            errorMessage = errorData?.message || errorMessage;
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
+        if (res.status === 204) return {} as TResponse;
+
+        const contentType = res.headers.get('content-type');
+        const isJson = contentType?.includes('application/json');
+
+        const data = isJson ? await res.json() : null;
+
+        if (!res.ok) {
+            return { error: data?.message || res.statusText || 'Request failed' };
         }
-        throw new Error(errorMessage);
+
+        return data as TResponse;
+    } catch (error) {
+        console.error('API Fetch Error:', error);
+        return { error: (error as Error).message || 'Unexpected error occurred' };
     }
-
-    if (res.status === 204) return {} as TResponse;
-
-    return res.json();
 }
 
 // ✅ Shortcut functions

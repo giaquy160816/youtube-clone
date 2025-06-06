@@ -9,14 +9,11 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
-import { notify } from '@/utils/noti';
+import { notify } from '@/lib/utils/noti';
 import type { UserInfo } from '@/types/auth';
 import { getUserInfo } from '@/lib/auth/get-info';
-import { useUser } from '@/context/UserContext';
-
-
-
-const getFullImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
+import { useUser } from '@/lib/context/UserContext';
+import { getFullImageUrl } from '@/lib/utils/image';
 
 const ProfilePage = () => {
     const [form, setForm] = useState({
@@ -101,9 +98,8 @@ const ProfilePage = () => {
                         <Image
                             src={avatarPreview || '/avatar-default.png'}
                             alt="avatar"
-                            width={80}
-                            height={80}
-                            className="rounded-full object-cover border "
+                            fill
+                            className="rounded-full object-cover border dark:border-zinc-700 border-zinc-300 "
                         />
                         {loading && (
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full">

@@ -19,8 +19,8 @@ import { apiPost } from '@/lib/api/fetcher';
 import { supabase } from '@/lib/auth/supabase-client';
 import type { AuthResponse } from '@/types/auth';
 
-import { useIsAuthenticated } from '@/hooks/useIsAuthenticated';
-import { useLoginHandler } from '@/hooks/useLoginHandler';
+import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
+import { useLoginHandler } from '@/lib/hooks/useLoginHandler';
 import { toast } from "sonner";
 
 export default function LoginPage() {

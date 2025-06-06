@@ -1,9 +1,9 @@
 "use client";
 
 import MainLayout from "@/components/layout/MainLayout";
-import { UserProvider } from "@/context/UserContext";
+import { UserProvider } from "@/lib/context/UserContext";
 import { useEffect, useState } from "react";
-import { useAuthCleaner } from "@/hooks/useAuthCleaner";
+import { useAuthCleaner } from "@/lib/hooks/useAuthCleaner";
 
 export default function RootMainLayout({ children }: { children: React.ReactNode }) {
     useAuthCleaner();

@@ -4,7 +4,8 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { VideoDetail } from '@/types/video';
-import { getVideoDetail } from '@/lib/videos/get-video-detail';
+import { getVideoDetail } from '@/features/videos/get-video-detail';
+import { getFullImageUrl } from '@/lib/utils/image';
 
 export default function VideoClient({ id }: { id: string }) {
     const [video, setVideo] = useState<VideoDetail | null>(null);
@@ -14,6 +15,11 @@ export default function VideoClient({ id }: { id: string }) {
         const fetchVideo = async () => {
             try {
                 const response = await getVideoDetail(id);
+                if ('error' in response) {
+                    // show UI: video not found + nút quay lại
+                  } else {
+                    // hiển thị nội dung video
+                  }
                 setVideo(response);
             } catch (error) {
                 console.error('Error fetching video:', error);
@@ -33,15 +39,15 @@ export default function VideoClient({ id }: { id: string }) {
             <div className="max-w-4xl mx-auto">
                 <div className="aspect-video w-full relative mb-4">
                     <video
-                        src={video.path}
+                        src={getFullImageUrl(video.path)}
                         controls
                         className="w-full h-full rounded-lg"
-                        poster={video.image}
+                        poster={getFullImageUrl(video.image)}
                     />
                 </div>
                 <div className="flex items-start gap-4">
                     <Image
-                        src={video.avatar}
+                        src={getFullImageUrl(video.avatar)}
                         alt={video.author}
                         width={48}
                         height={48}

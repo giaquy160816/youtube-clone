@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { PATH } from "@/lib/constants/paths";
-import { useUser } from "@/context/UserContext";
+import { useUser } from "@/lib/context/UserContext";
 
 const getFullImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
 
@@ -41,23 +41,23 @@ export function UserMenu() {
                     {user.fullname || user.email}
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
                     <Link href={PATH.PROFILE}>
                         Cập nhật thông tin
                     </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
                     <Link href={PATH.VIDEO_MANAGE}>
                         Video của tôi
                     </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
                     <Link href={PATH.VIDEO_POST}>
                         Đăng video
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer hover:text-white">
+                <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
                     <Link href={PATH.LOGOUT}>
                         Đăng xuất
                     </Link>

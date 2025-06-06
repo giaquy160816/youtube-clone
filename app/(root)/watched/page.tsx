@@ -2,7 +2,7 @@
 
 import VideoList from "@/components/video/list-video";
 import { useState } from "react";
-import { useLoadingOnce } from "@/hooks/useLoadingOnce";
+import { useLoadingOnce } from "@/lib/hooks/useLoadingOnce";
 
 const watchedVideos = [
     {

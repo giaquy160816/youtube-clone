@@ -2,17 +2,26 @@
 
 import type { Metadata } from 'next';
 import VideoClient from './VideoClient';
-import { getVideoDetail } from '@/lib/videos/get-video-detail';
+import { getVideoDetail } from '@/features/videos/get-video-detail';
 
 type Props = {
     params: Promise<{ id: string }>;
     searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-// ✅ SEO metadata từ nội dung video
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
     const video = await getVideoDetail(id);
+
+    if (!video || 'error' in video) {
+        return {
+            title: 'Video không tồn tại',
+            description: 'Video bạn tìm kiếm không tồn tại hoặc đã bị xóa.',
+            openGraph: {
+                images: ['/default-thumbnail.jpg'], // fallback image
+            },
+        };
+    }
 
     return {
         title: video.title,

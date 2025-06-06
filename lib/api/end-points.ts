@@ -11,10 +11,15 @@ export const API_ENDPOINTS = {
     },
     video: {
         list: '/video',
+        post: '/backend/video',
         detail: (id: string) => `/video/${id}`,
     },
     common: {
         uploadImage: '/backend/common/upload-image',
+        uploadVideo: '/backend/common/upload-video',
+        initVideoUpload: '/backend/common/init-video-upload',
+        uploadVideoChunk: '/backend/common/upload-video-chunk',
+        completeVideoUpload: '/backend/common/complete-video-upload',
     },
     user: {
         me: '/backend/user/me',
