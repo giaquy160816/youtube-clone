@@ -6,6 +6,7 @@ import Image from 'next/image';
 import type { VideoDetail } from '@/types/video';
 import { getVideoDetail } from '@/features/videos/get-video-detail';
 import { getFullPath } from '@/lib/utils/get-full-path';
+import { getFullPath } from '@/lib/utils/get-full-path';
 import { notify } from '@/lib/utils/noti';
 import ReactPlayer from 'react-player/lazy'
 
@@ -39,10 +40,13 @@ export default function VideoClient({ id }: { id: string }) {
         <div className="p-4">
             <div className="max-w-4xl mx-auto">
                 <div className="aspect-video w-full relative mb-4">
+                    <video
+                        src={getFullPath(video.path)}
                     {/* <video
                         src={getFullImageUrl(video.path)}
                         controls
                         className="w-full h-full rounded-lg"
+                        poster={getFullPath(video.image)}
                         poster={getFullImageUrl(video.image)}
                     /> */}
                     <ReactPlayer
@@ -55,6 +59,7 @@ export default function VideoClient({ id }: { id: string }) {
                 </div>
                 <div className="flex items-start gap-4">
                     <Image
+                        src={getFullPath(video.avatar)}
                         src={getFullPath(video.avatar)}
                         alt={video.author}
                         width={48}
