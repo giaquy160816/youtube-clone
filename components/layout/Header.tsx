@@ -1,11 +1,15 @@
 "use client";
+import { useEffect, useState } from "react";
 import UserMenu from "@/components/layout/UserMenu";
 import { FaSearch } from "react-icons/fa";
-import { Menu } from "lucide-react";
+import { Menu, Sun, Moon } from "lucide-react";
 import { PATH } from "@/lib/constants/paths";
 import Link from "next/link";
+import { useTheme } from "@/lib/context/ThemeContext";
 
 export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
+    const { isDark, toggleTheme } = useTheme();
+
     return (
         <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-background">
             {/* Mobile: menu icon */}
@@ -25,7 +29,7 @@ export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
 
             {/* Search form: hidden on mobile */}
             <form className="hidden md:flex w-full max-w-xl mx-6">
-                <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden">
+                <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden dark:border-primary-foreground">
                     <input
                         type="text"
                         placeholder="Tìm kiếm video..."
@@ -40,8 +44,16 @@ export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
                 </div>
             </form>
 
-            {/* User avatar */}
-            <div className="md:ml-0">
+            {/* User avatar & dark mode toggle */}
+            <div className="flex items-center gap-2 md:ml-0">
+                {/* Nút chuyển dark/light */}
+                <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-full hover:bg-muted transition"
+                    aria-label="Toggle dark mode"
+                >
+                    {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
                 <UserMenu />
             </div>
         </header>

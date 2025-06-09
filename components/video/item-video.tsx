@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { VideoResponse } from '@/types/video';
 import { PATH } from '@/lib/constants/paths';
-import { getFullImageUrl } from '@/lib/utils/image';
+import { getFullPath } from '@/lib/utils/get-full-path';
 
 export default function VideoCard({ video }: { video: VideoResponse }) {
     return (
@@ -10,7 +10,7 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
             <figure className="relative aspect-video w-full rounded-xl overflow-hidden mb-2">
                 <Link href={PATH.VIDEO_DETAIL(video.id) || ''}>
                     <Image
-                        src={getFullImageUrl(video.image) || ''}
+                        src={getFullPath(video.image) || ''}
                         alt={video.title}
                         fill
                         className="object-cover"
@@ -20,7 +20,7 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
             </figure>
             <div className="flex items-start gap-3">
                 <Image
-                    src={getFullImageUrl(video.avatar) || ''}
+                    src={getFullPath(video.avatar) || ''}
                     alt={video.author || ''}
                     width={40}
                     height={40}

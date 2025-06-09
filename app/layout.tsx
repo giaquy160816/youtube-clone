@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children, }: { children: React.ReactNode; }) {
     return (
         <html lang="en">
-            <body className={`${inter.className} relative isolate`}>
+            <body className={`${inter.className} relative isolate`} suppressHydrationWarning>
                 <LoadingProvider>
                     {children}
                 </LoadingProvider>

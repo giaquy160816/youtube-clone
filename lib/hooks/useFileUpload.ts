@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { notify } from '@/lib/utils/noti';
-import { getFullImageUrl } from '@/lib/utils/image';
+import { getFullPath } from '@/lib/utils/get-full-path';
 
 type FileType = 'image' | 'video';
 
@@ -31,7 +31,7 @@ export const useFileUpload = ({ onSuccess, fileType = 'image' }: UseFileUploadPr
             const res = await api(endpoint, { method: 'POST' }, formData) as { path: string };
             
             if (fileType === 'image') {
-                setPreview(getFullImageUrl(res.path || ''));
+                setPreview(getFullPath(res.path || ''));
             }
             
             onSuccess?.(res.path);

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { VideoDetail } from '@/types/video';
 import { getVideoDetail } from '@/features/videos/get-video-detail';
-import { getFullImageUrl } from '@/lib/utils/image';
+import { getFullPath } from '@/lib/utils/get-full-path';
 import { notify } from '@/lib/utils/noti';
 import ReactPlayer from 'react-player/lazy'
 
@@ -46,7 +46,7 @@ export default function VideoClient({ id }: { id: string }) {
                         poster={getFullImageUrl(video.image)}
                     /> */}
                     <ReactPlayer
-                        url={getFullImageUrl(video.path)}
+                        url={getFullPath(video.path)}
                         className="w-full h-full rounded-lg"
                         playing={true}
                         controls={true}
@@ -55,7 +55,7 @@ export default function VideoClient({ id }: { id: string }) {
                 </div>
                 <div className="flex items-start gap-4">
                     <Image
-                        src={getFullImageUrl(video.avatar)}
+                        src={getFullPath(video.avatar)}
                         alt={video.author}
                         width={48}
                         height={48}

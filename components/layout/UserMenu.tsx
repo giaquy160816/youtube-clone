@@ -12,8 +12,7 @@ import {
 import Link from "next/link";
 import { PATH } from "@/lib/constants/paths";
 import { useUser } from "@/lib/context/UserContext";
-
-const getFullImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
+import { getFullPath } from "@/lib/utils/get-full-path";
 
 export function UserMenu() {
     const { user } = useUser();
@@ -27,12 +26,12 @@ export function UserMenu() {
             </Link>
         );
     }
-
+    const avatarUrl = getFullPath(user.avatar || '');
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
-                    <AvatarImage src={getFullImageUrl(user.avatar || "")} alt={user.fullname} />
+                    <AvatarImage src={avatarUrl} alt={user.fullname} />
                     <AvatarFallback>{user.fullname.charAt(0)}</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>

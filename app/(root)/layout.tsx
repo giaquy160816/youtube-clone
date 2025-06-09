@@ -4,16 +4,11 @@ import MainLayout from "@/components/layout/MainLayout";
 import { UserProvider } from "@/lib/context/UserContext";
 import { useEffect, useState } from "react";
 import { useAuthCleaner } from "@/lib/hooks/useAuthCleaner";
+import { ThemeProvider, useTheme } from "@/lib/context/ThemeContext";
 
 export default function RootMainLayout({ children }: { children: React.ReactNode }) {
     useAuthCleaner();
-    const [isDark, setIsDark] = useState(false);
-    useEffect(() => {
-        const hour = new Date().getHours();
-        // Nếu giờ từ 18h (6pm) đến 6h sáng
-        const dark = hour >= 18 || hour < 6;
-        setIsDark(dark);
-    }, []);
+    const { isDark } = useTheme();
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function (registrations) {
@@ -23,8 +18,10 @@ export default function RootMainLayout({ children }: { children: React.ReactNode
         });
     }
     return (
-        <UserProvider>
-            <MainLayout isDark={isDark}>{children}</MainLayout>
-        </UserProvider>
+        <ThemeProvider>
+            <UserProvider>
+                <MainLayout isDark={isDark}>{children}</MainLayout>
+            </UserProvider>
+        </ThemeProvider>
     );
 }

@@ -11,7 +11,6 @@ export const API_ENDPOINTS = {
     },
     video: {
         list: '/video',
-        post: '/backend/video',
         detail: (id: string) => `/video/${id}`,
     },
     common: {
@@ -23,5 +22,11 @@ export const API_ENDPOINTS = {
     },
     user: {
         me: '/backend/user/me',
+        video: {
+            me: '/backend/video/me',
+            post: '/backend/video',
+            detail: (id: string) => `/backend/video/${id}`,
+            edit: (id: string) => `/backend/video/${id}`,
+        }
     },
 } as const;
