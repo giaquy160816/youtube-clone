@@ -12,12 +12,13 @@ export async function getVideoDetail(id: string): Promise<VideoDetail | null> {
         console.warn('❌ Invalid video ID:', id);
         return null;
     }
-    const cached = videoCache.get(id);
-    if (cached) return cached;
+    // const cached = videoCache.get(id);
+    // if (cached) return cached;
 
     const res = await apiGet<{ data: VideoDetail }>(
         API_ENDPOINTS.video.detail(id)
     );
+    console.log(res);
 
     if ('error' in res) {
         return null;

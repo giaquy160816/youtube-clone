@@ -95,7 +95,7 @@ export default function CommentSection({ videoId }: { videoId: string }) {
     };
 
     return (
-        <div className="mt-6 border-t pt-4 mx-auto max-w-2xl">
+        <div className="mt-6 border-t pt-4 mx-auto w-full">
             <h3 className="text-xl font-semibold mb-3">Bình luận</h3>
 
             {/* 💬 Form comment nằm trên */}
@@ -135,7 +135,12 @@ export default function CommentSection({ videoId }: { videoId: string }) {
 
                 {hasMore && (
                     <div className="text-center pt-3">
-                        <Button variant="ghost" onClick={() => fetchComments(comments.length, true)} disabled={fetching}>
+                        <Button 
+                        variant="ghost" 
+                        className="bg-primary hover:bg-primary/90 text-white"
+                        onClick={() => fetchComments(comments.length, true)} 
+                        disabled={fetching}
+                        >
                             {fetching ? 'Đang tải...' : 'Xem thêm bình luận'}
                         </Button>
                     </div>
