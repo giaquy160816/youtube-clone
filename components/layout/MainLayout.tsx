@@ -16,7 +16,7 @@ export default function MainLayout({ children, isDark }: { children: React.React
             {/* Overlay khi mở sidebar mobile */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-30 z-30 md:hidden"
+                    className="fixed inset-0 bg-primary/30 z-30 md:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
 

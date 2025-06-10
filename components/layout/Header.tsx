@@ -6,9 +6,17 @@ import { Menu, Sun, Moon } from "lucide-react";
 import { PATH } from "@/lib/constants/paths";
 import Link from "next/link";
 import { useTheme } from "@/lib/context/ThemeContext";
+import { useVideoSearch } from "@/lib/hooks/useVideoSearch";
 
 export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
     const { isDark, toggleTheme } = useTheme();
+    const { searchVideos, loading } = useVideoSearch();
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        searchVideos(searchQuery);
+    };
 
     return (
         <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-background">
@@ -28,16 +36,19 @@ export function Header({ toggleSidebar }: { toggleSidebar?: () => void }) {
             </div>
 
             {/* Search form: hidden on mobile */}
-            <form className="hidden md:flex w-full max-w-xl mx-6">
+            <form onSubmit={handleSubmit} className="hidden md:flex w-full max-w-xl mx-6">
                 <div className="flex flex-1 border border-input bg-background rounded-full overflow-hidden dark:border-primary-foreground">
                     <input
                         type="text"
                         placeholder="Tìm kiếm video..."
                         className="flex-1 px-4 py-2 bg-transparent text-sm outline-none"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                     <button
                         type="submit"
                         className="bg-red-600 hover:bg-red-700 text-white px-4 flex items-center justify-center"
+                        disabled={loading}
                     >
                         <FaSearch className="text-white text-sm" />
                     </button>

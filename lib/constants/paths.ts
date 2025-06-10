@@ -10,5 +10,6 @@ export const PATH = {
     VIDEO_MANAGE: '/me/manage',
     VIDEO_DETAIL: (id: string | number) => `/video/detail/${id}`,
     VIDEO_LIST: '/video',
+    VIDEO_SEARCH: '/video/search',
     // USER_DETAIL: (uid: string) => `/user/${uid}`,
 };

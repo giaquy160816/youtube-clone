@@ -8,15 +8,12 @@ import {
     ListVideo,
     Clock3,
     ThumbsUp,
-    Download,
-    UserSquare,
-    Music2,
     Youtube,
     X
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
-import { FaSearch } from "react-icons/fa";
+import SidebarSearch from "./SidebarSearch";
 
 export function Sidebar({
     isOpen = false,
@@ -56,16 +53,7 @@ export function Sidebar({
 
             {/* Mobile Search Form */}
             <div className="md:hidden px-1 pb-2">
-                <form className="flex items-center border border-input rounded-full overflow-hidden">
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm..."
-                        className="flex-1 px-3 py-1 text-sm outline-none bg-transparent"
-                    />
-                    <button type="submit" className="bg-red-600 text-white px-3 py-1">
-                        <FaSearch className="text-sm" />
-                    </button>
-                </form>
+                <SidebarSearch onClose={onClose} />
             </div>
 
 
