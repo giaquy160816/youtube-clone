@@ -27,6 +27,9 @@ export const API_ENDPOINTS = {
             post: '/backend/video',
             detail: (id: string) => `/backend/video/${id}`,
             edit: (id: string) => `/backend/video/${id}`,
+            like: `/backend/like`,
+            dislike: (id: string) => `/backend/like/${id}`,
+            checkLike: (id: string) => `/backend/like/check/${id}`,
         }
     },
 } as const;

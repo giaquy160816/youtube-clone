@@ -11,10 +11,15 @@ import ReactPlayer from 'react-player/lazy'
 import { ThumbsUp, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
+import { api, apiPost } from '@/lib/api/fetcher';
+import { API_ENDPOINTS } from '@/lib/api/end-points';
 
 export default function VideoClient({ id }: { id: string }) {
     const [video, setVideo] = useState<VideoDetail | null>(null);
     const [loading, setLoading] = useState(true);
+    const isAuthenticated = useIsAuthenticated();
+    const [isLiked, setIsLiked] = useState(false);
 
     useEffect(() => {
         const fetchVideo = async () => {
@@ -31,10 +36,35 @@ export default function VideoClient({ id }: { id: string }) {
                 setLoading(false);
             }
         };
-
         fetchVideo();
-    }, [id]);
 
+        const checkLike = async () => {
+            const res = await api(API_ENDPOINTS.user.video.checkLike(id), { method: 'GET' }) as { isLiked: boolean };
+            console.log('🧹 res', res);
+            setIsLiked(res?.isLiked || false);
+        };
+        checkLike();
+
+
+    }, [id]);
+    const handleLike = async () => {
+        try {
+            if (isLiked) {
+                const res = await api(API_ENDPOINTS.user.video.dislike(id), { method: 'DELETE' }) as { message: string };
+                console.log('🧹 res', res);
+                setIsLiked(false);
+                toast.error('Bạn đã bỏ thích video này!');
+                return;
+            }
+            const res = await api(API_ENDPOINTS.user.video.like, { method: 'POST' }, { video_id: parseInt(id) }) as { message: string };
+            console.log('🧹 res', res);
+            setIsLiked(true);
+            toast.success('Bạn đã thích video này!');
+        } catch (error) {
+            console.error('Error liking video:', error);
+        }
+    };
+    
     if (loading) return <div className="p-4">Đang tải...</div>;
     if (!video) return <div className="p-4">Không tìm thấy video</div>;
 
@@ -78,13 +108,18 @@ export default function VideoClient({ id }: { id: string }) {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
-                                    // TODO: thực hiện logic lưu like vào Supabase/NestJS
-                                    toast.success('Bạn đã thích video này!');
+                                    if (!isAuthenticated) {
+                                        toast.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
+                                        return;
+                                    }
+                                    handleLike();
                                 }}
-                                className="flex items-center gap-1 border-primary border-1 border-solid"
+                                className={`flex items-center gap-1 border-primary border-1 border-solid hover:bg-primary hover:text-white ${isLiked ? 'bg-primary text-white' : ''}`}
                             >
                                 <ThumbsUp className="w-4 h-4" />
-                                <span>Thích</span>
+                                <span>
+                                    {isLiked ? 'Đã thích' : 'Thích'}
+                                </span>
                             </Button>
 
                             <Button
