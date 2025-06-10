@@ -9,6 +9,7 @@ export type VideoResponse = {
     createdAt: string;
     author: string;
     avatar: string;
+    tags?: string[];
 };
 
 
@@ -16,4 +17,5 @@ export type VideoDetail = VideoResponse & {
     views: number;
     description: string;
     path: string;
+    isActive: boolean;
 }; 

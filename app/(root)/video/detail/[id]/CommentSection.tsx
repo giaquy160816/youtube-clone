@@ -5,7 +5,6 @@ import { supabase } from '@/lib/auth/supabase-client';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { useUser } from '@/lib/context/UserContext';
 
@@ -22,7 +21,7 @@ export default function CommentSection({ videoId }: { videoId: string }) {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(false);
     const { user } = useUser();
     const LIMIT = 5;
 
@@ -43,7 +42,8 @@ export default function CommentSection({ videoId }: { videoId: string }) {
             } else {
                 setComments(data || []);
             }
-            if (!data || data.length < LIMIT) setHasMore(false);
+            if (!data || data.length < LIMIT) setHasMore(false)
+            else setHasMore(true);
         }
         setFetching(false);
     };

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import UserMenu from "@/components/layout/UserMenu";
 import { FaSearch } from "react-icons/fa";
 import { Menu, Sun, Moon } from "lucide-react";

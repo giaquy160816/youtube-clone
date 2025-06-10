@@ -13,6 +13,7 @@ import { api } from '@/lib/api/fetcher'
 import { notify } from '@/lib/utils/noti'
 import Image from 'next/image'
 import { getFullPath } from '@/lib/utils/get-full-path'
+import { TagInput } from "@/components/ui/tag-input"
 
 const PostVideoPage = () => {
     const params = useParams()
@@ -24,7 +25,8 @@ const PostVideoPage = () => {
         description: '',
         image: '',
         path: '',
-        isActive: true
+        isActive: true,
+        tags: [] as string[]
     });
 
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -51,17 +53,19 @@ const PostVideoPage = () => {
         if (isEdit) {
             (async () => {
                 try {
-                    const res = await api(API_ENDPOINTS.user.video.detail(id), { method: 'GET' }) as { title?: string; description?: string; image?: string; path?: string; isActive?: boolean };
+                    const res = await api(API_ENDPOINTS.user.video.detail(id), { method: 'GET' }) as { title?: string; description?: string; image?: string; path?: string; isActive?: boolean; tags?: string[] };
                     setForm({
                         title: res.title || '',
                         description: res.description || '',
                         image: res.image || '',
                         path: res.path || '',
-                        isActive: res.isActive ?? true
+                        isActive: res.isActive ?? true,
+                        tags: res.tags || []
                     });
                     setPreview(getFullPath(res.image || ''));
-                } catch (err) {
-                    notify.error("Không thể tải dữ liệu video");
+                } catch (err: unknown) {
+                    const errorMessage = err instanceof Error ? err.message : 'Lỗi xử lý video';
+                    notify.error(errorMessage);
                 }
             })();
         }
@@ -92,7 +96,8 @@ const PostVideoPage = () => {
                     description: '',
                     image: '',
                     path: '',
-                    isActive: true
+                    isActive: true,
+                    tags: []
                 });
                 setUploadProgress(0);
                 setPreview('');
@@ -134,6 +139,16 @@ const PostVideoPage = () => {
                                 onChange={handleChange}
                                 className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent transition"
                                 placeholder="Nhập mô tả video"
+                            />
+                        </div>
+
+                        {/* Tags */}
+                        <div className="space-y-2">
+                            <Label htmlFor="tags">Tags</Label>
+                            <TagInput
+                                tags={form.tags}
+                                onChange={(tags) => setForm(prev => ({ ...prev, tags }))}
+                                placeholder="Nhập tag và nhấn Enter..."
                             />
                         </div>
 
@@ -243,7 +258,7 @@ const PostVideoPage = () => {
                                 </div>
                             )}
                         </div>
-
+                            
                         {/* Active Status */}
                         <div className="space-y-2">
                             <Label>Trạng thái</Label>

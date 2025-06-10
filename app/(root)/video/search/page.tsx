@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import VideoList from '@/components/video/list-video';
 import type { VideoResponse } from '@/types/video';
@@ -15,11 +15,15 @@ export default function SearchPage() {
         onSearch: (results) => setVideos(results),
     });
 
-    useEffect(() => {
+    const handleSearch = useCallback(() => {
         if (query) {
             searchVideos(query);
         }
     }, [query]);
+
+    useEffect(() => {
+        handleSearch();
+    }, [handleSearch]);
 
     return (
         <div className="p-4">
@@ -31,7 +35,7 @@ export default function SearchPage() {
             ) : videos.length > 0 ? (
                 <VideoList videos={videos} />
             ) : query ? (
-                <div>Không tìm thấy kết quả nào cho "{query}"</div>
+                <div>Không tìm thấy kết quả nào cho &ldquo;{query}&rdquo;</div>
             ) : null}
         </div>
     );

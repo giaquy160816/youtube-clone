@@ -7,6 +7,11 @@ import { notify } from '@/lib/utils/noti';
 const videoCache = new InMemoryCache<VideoDetail>(60 * 1000); // TTL 1 phút
 
 export async function getVideoDetail(id: string): Promise<VideoDetail | null> {
+    const videoId = parseInt(id);
+    if (isNaN(videoId)) {
+        console.warn('❌ Invalid video ID:', id);
+        return null;
+    }
     const cached = videoCache.get(id);
     if (cached) return cached;
 
@@ -15,7 +20,6 @@ export async function getVideoDetail(id: string): Promise<VideoDetail | null> {
     );
 
     if ('error' in res) {
-        notify.error(res.error);
         return null;
     }
 

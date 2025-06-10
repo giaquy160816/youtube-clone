@@ -2,7 +2,6 @@
 
 import MainLayout from "@/components/layout/MainLayout";
 import { UserProvider } from "@/lib/context/UserContext";
-import { useEffect, useState } from "react";
 import { useAuthCleaner } from "@/lib/hooks/useAuthCleaner";
 import { ThemeProvider, useTheme } from "@/lib/context/ThemeContext";
 

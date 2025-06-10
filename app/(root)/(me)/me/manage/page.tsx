@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ export default function VideoManagePage() {
     const [total, setTotal] = useState(0);
     const [showPagination, setShowPagination] = useState(false);
 
-    const fetchVideos = async () => {
+    const fetchVideos = useCallback(async () =>  {
         setLoading(true);
         const query = `?page=${page}&limit=${limit}`;
         const res = await apiGet<VideoResponse>(`${API_ENDPOINTS.user.video.me}${query}`);
@@ -48,11 +48,11 @@ export default function VideoManagePage() {
         }
 
         setLoading(false);
-    };
+    }, [page, limit]);
 
     useEffect(() => {
         fetchVideos();
-    }, [page]);
+    }, [fetchVideos]);
 
     const hasNext = page * limit < total;
 
