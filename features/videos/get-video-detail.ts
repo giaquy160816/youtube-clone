@@ -20,6 +20,5 @@ export async function getVideoDetail(id: string): Promise<VideoDetail | null> {
     }
 
     videoCache.set(id, res.data);
-    console.log('🧹 res.data', res.data);
     return res.data;
 }

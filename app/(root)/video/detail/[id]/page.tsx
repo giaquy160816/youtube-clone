@@ -3,6 +3,7 @@
 import type { Metadata } from 'next';
 import VideoClient from './VideoClient';
 import { getVideoDetail } from '@/features/videos/get-video-detail';
+import CommentSection from './CommentSection';
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -35,5 +36,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ✅ Server component – truyền `id` sang client
 export default async function Page({ params }: Props) {
     const { id } = await params;
-    return <VideoClient id={id} />;
+    return (
+        <div className="max-w-4xl mx-auto mt-10">
+            <VideoClient id={id} />
+            <CommentSection videoId={id} />
+        </div>
+
+    ) 
+    
 }
