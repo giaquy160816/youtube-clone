@@ -75,7 +75,7 @@ export default function CommentSection({ videoId }: { videoId: string }) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [fetchComments]);
+    }, [fetchComments, videoId]);
 
     const handleSendComment = async () => {
         if (!input.trim()) return;
