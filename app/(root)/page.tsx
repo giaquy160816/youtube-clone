@@ -7,10 +7,10 @@ import VideoList from '@/components/video/list-video';
 import type { VideoResponse } from '@/types/video'; 
 import type { VideoListParams, ApiResponse } from '@/types/api';
 import { notify } from '@/lib/utils/noti';
-
+const DEFAULT_SEARCH_PAGE_LIMIT = parseInt(process.env.NEXT_PUBLIC_PAGE_LIMIT || '9');
 const defaultParams: VideoListParams = {
     page: 1,
-    limit: 9,
+    limit: DEFAULT_SEARCH_PAGE_LIMIT,
     q: '',
 } as const;
 

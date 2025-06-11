@@ -1,3 +1,4 @@
+// app/(root)/(me)/me/manage/page.tsx
 'use client';
 
 import { useEffect, useState, useCallback } from "react";
@@ -9,10 +10,11 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 
 import { PATH } from "@/lib/constants/paths";
 import { API_ENDPOINTS } from "@/lib/api/end-points";
-import { apiGet } from "@/lib/api/fetcher";
+import { api, apiGet } from "@/lib/api/fetcher";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getFullPath } from "@/lib/utils/get-full-path";
+import { responseSuccess } from "@/types/api";
 
 type VideoItem = {
     id: number;
@@ -28,12 +30,12 @@ type VideoResponse = {
 export default function VideoManagePage() {
     const [videos, setVideos] = useState<VideoItem[]>([]);
     const [page, setPage] = useState(1);
-    const limit = 10;
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
     const [showPagination, setShowPagination] = useState(false);
+    const limit = 1;
 
-    const fetchVideos = useCallback(async () =>  {
+    const fetchVideos = useCallback(async () => {
         setLoading(true);
         const query = `?page=${page}&limit=${limit}`;
         const res = await apiGet<VideoResponse>(`${API_ENDPOINTS.user.video.me}${query}`);
@@ -53,6 +55,26 @@ export default function VideoManagePage() {
     useEffect(() => {
         fetchVideos();
     }, [fetchVideos]);
+
+    const handleDelete = async (videoId: string) => {
+        const confirmDelete = confirm('Bạn có chắc chắn muốn xoá video này?');
+        if (!confirmDelete) return;
+
+        try {
+            const res = await api<responseSuccess>(API_ENDPOINTS.user.video.delete(videoId), { method: 'DELETE' });
+            if (!res || "error" in res) {
+                toast.error(res?.error || 'Xoá video thất bại');
+                return;
+            }
+            console.log(res.message);
+            
+            toast.success(res.message || 'Xoá video thành công!');
+            // Reload lại dữ liệu video sau khi xoá
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const hasNext = page * limit < total;
 
@@ -129,7 +151,7 @@ export default function VideoManagePage() {
                                                         size="icon"
                                                         variant="destructive"
                                                         className="w-8 h-8"
-                                                        onClick={() => toast.info("Tính năng xoá chưa xử lý")}
+                                                        onClick={() => handleDelete(video.id.toString())}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
@@ -145,14 +167,14 @@ export default function VideoManagePage() {
                 </table>
             </div>
             {showPagination && (
-            <div className="flex justify-center gap-4 mt-4">
-                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
-                    Trang trước
-                </Button>
-                <Button variant="outline" size="sm" disabled={!hasNext} onClick={() => setPage(page + 1)}>
-                    Trang tiếp
-                </Button>
-            </div>
+                <div className="flex justify-center gap-4 mt-4">
+                    <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
+                        Trang trước
+                    </Button>
+                    <Button variant="outline" size="sm" disabled={!hasNext} onClick={() => setPage(page + 1)}>
+                        Trang tiếp
+                    </Button>
+                </div>
             )}
         </div>
     );

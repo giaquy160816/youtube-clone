@@ -13,14 +13,23 @@ interface TagInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>
 export function TagInput({ tags, onChange, placeholder = "Nhập tag và nhấn Enter...", className, ...props }: TagInputProps) {
     const [inputValue, setInputValue] = React.useState("");
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && inputValue.trim()) {
-            e.preventDefault();
-            if (!tags.includes(inputValue.trim())) {
-                onChange([...tags, inputValue.trim()]);
-            }
-            setInputValue("");
+    const addTagIfValid = () => {
+        const trimmed = inputValue.trim();
+        if (trimmed && !tags.includes(trimmed)) {
+            onChange([...tags, trimmed]);
         }
+        setInputValue("");
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addTagIfValid();
+        }
+    };
+
+    const handleBlur = () => {
+        addTagIfValid();
     };
 
     const removeTag = (tagToRemove: string) => {
@@ -51,6 +60,7 @@ export function TagInput({ tags, onChange, placeholder = "Nhập tag và nhấn 
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onBlur={handleBlur}
                 placeholder={tags.length === 0 ? placeholder : ""}
                 className="flex-1 min-w-[120px] bg-transparent outline-none text-sm"
                 {...props}

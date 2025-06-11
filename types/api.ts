@@ -4,6 +4,7 @@ export type ApiResponse<T> = {
     data: T;
     message?: string;
     status?: number;
+    total?: number;
 };
 
 export type PaginationParams = {
@@ -22,3 +23,7 @@ export type PaginatedResponse<T> = ApiResponse<T> & {
 export type VideoListParams = PaginationParams & {
     q: string;
 }; 
+
+export type responseSuccess = {
+    message: string;
+}
