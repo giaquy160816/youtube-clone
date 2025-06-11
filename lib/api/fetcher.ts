@@ -19,7 +19,8 @@ export async function api<TResponse = unknown, TRequest = unknown>(
     body?: TRequest
 ): Promise<TResponse | { error: string }> {
     const token = getAccessTokenFromCookie();
-
+    console.log('token', token);
+    
     const headers: HeadersInit = {
         ...(options.headers || {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
