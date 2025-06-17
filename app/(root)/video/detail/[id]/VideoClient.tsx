@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { VideoDetail, VideoResponse } from '@/types/video';
 import { getFullPath } from '@/lib/utils/get-full-path';
@@ -53,7 +53,6 @@ export default function VideoClient({
         <div className="w-full">
             <div className="w-full max-w-4xl mx-auto">
                 <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
-                    <Suspense fallback={<div>Loading...</div>}>
                         <ReactPlayer
                             // key={retryKey}
                             url={getFullPath(video.path)}
@@ -80,7 +79,6 @@ export default function VideoClient({
                                 </div>
                             </div>
                         )}
-                    </Suspense>
                 </div>
                 <div className="flex flex-col gap-4">
                     <div className="flex items-start gap-4">

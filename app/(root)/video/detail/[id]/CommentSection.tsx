@@ -1,6 +1,7 @@
+// app/(root)/video/detail/[id]/CommentSection.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/auth/supabase-client';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ export default function CommentSection({ videoId }: { videoId: string }) {
     const { user } = useUser();
     const LIMIT = 5;
 
-    const fetchComments = async (offset = 0, append = false) => {
+    const fetchComments = useCallback(async (offset = 0, append = false) => {
         setFetching(true);
         const { data, error } = await supabase
             .from('video_comments')
@@ -46,11 +47,14 @@ export default function CommentSection({ videoId }: { videoId: string }) {
             else setHasMore(true);
         }
         setFetching(false);
-    };
+    }, [videoId]);
 
     useEffect(() => {
-        fetchComments();
-
+        const loadComments = async () => {
+            await fetchComments(0, false);
+        }
+        loadComments();
+        
         const channel = supabase
             .channel(`realtime-comments-${videoId}`)
             .on(
@@ -71,7 +75,7 @@ export default function CommentSection({ videoId }: { videoId: string }) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [videoId]);
+    }, [fetchComments, videoId]);
 
     const handleSendComment = async () => {
         if (!input.trim()) return;

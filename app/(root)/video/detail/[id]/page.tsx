@@ -48,7 +48,6 @@ export default async function Page({ params }: Props) {
     let relatedVideos: VideoResponse[] = [];
     try {
         const urlGetRelatedVideos = API_ENDPOINTS.video.list + '?q='+video?.tags?.join(',')+'&page=1&limit=7';
-        console.log('urlGetRelatedVideos', urlGetRelatedVideos);
         const res = await apiGet<{ data: VideoResponse[] } | { error: string }>(urlGetRelatedVideos);
         if (res && !('error' in res) && Array.isArray(res.data)) {
             relatedVideos = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 6);
