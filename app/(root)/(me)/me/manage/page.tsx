@@ -33,7 +33,7 @@ export default function VideoManagePage() {
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
     const [showPagination, setShowPagination] = useState(false);
-    const limit = 1;
+    const limit = 20;
 
     const fetchVideos = useCallback(async () => {
         setLoading(true);

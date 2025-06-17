@@ -1,7 +1,7 @@
 // app/(root)/video/post/page.tsx
 "use client"
 import React, { useState, useEffect } from 'react'
-import { useParams } from "next/navigation"
+import { redirect, useParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -30,8 +30,8 @@ const PostVideoPage = () => {
     });
 
     const [uploadProgress, setUploadProgress] = useState(0);
-    const { 
-        handleFileUpload: handleImageUpload, 
+    const {
+        handleFileUpload: handleImageUpload,
         loading: imageLoading,
         preview: imagePreview,
         setPreview
@@ -40,9 +40,9 @@ const PostVideoPage = () => {
         onSuccess: (path) => setForm(prev => ({ ...prev, image: path }))
     });
 
-    const { 
-        handleVideoUpload, 
-        loading: videoLoading 
+    const {
+        handleVideoUpload,
+        loading: videoLoading
     } = useVideoUpload({
         onSuccess: (path) => setForm(prev => ({ ...prev, path })),
         onProgress: (progress) => setUploadProgress(progress)
@@ -106,6 +106,9 @@ const PostVideoPage = () => {
             const errorMessage = err instanceof Error ? err.message : 'Lỗi xử lý video';
             notify.error(errorMessage);
         }
+    };
+    const handleCancel = () => {
+        redirect('/me/manage')
     };
 
     return (
@@ -181,8 +184,8 @@ const PostVideoPage = () => {
                                     {imageLoading ? (
                                         <span className="flex items-center gap-2">
                                             <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                                             </svg>
                                             Đang tải...
                                         </span>
@@ -200,8 +203,8 @@ const PostVideoPage = () => {
                                 <div className="relative mt-2 h-40 w-40">
                                     <Image
                                         fill
-                                        src={imagePreview} 
-                                        alt="Preview" 
+                                        src={imagePreview}
+                                        alt="Preview"
                                         className="object-cover rounded-md"
                                     />
                                 </div>
@@ -247,8 +250,8 @@ const PostVideoPage = () => {
                             {videoLoading && (
                                 <div className="mt-2">
                                     <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div 
-                                            className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                                        <div
+                                            className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
                                             style={{ width: `${uploadProgress}%` }}
                                         ></div>
                                     </div>
@@ -258,7 +261,7 @@ const PostVideoPage = () => {
                                 </div>
                             )}
                         </div>
-                            
+
                         {/* Active Status */}
                         <div className="space-y-2">
                             <Label>Trạng thái</Label>
@@ -285,16 +288,26 @@ const PostVideoPage = () => {
                                 </label>
                             </div>
                         </div>
-
-                        <Button 
-                            type="submit" 
-                            className="w-full"
-                            disabled={imageLoading || videoLoading}
-                        >
-                            {imageLoading || videoLoading
-                                ? (isEdit ? 'Đang cập nhật...' : 'Đang xử lý...')
-                                : (isEdit ? 'Cập nhật video' : 'Đăng video')}
-                        </Button>
+                        <div className="space-y-2 text-center">
+                            
+                            <Button
+                                type="submit"
+                                className="w-2/4"
+                                disabled={imageLoading || videoLoading}
+                            >
+                                {imageLoading || videoLoading
+                                    ? (isEdit ? 'Đang cập nhật...' : 'Đang xử lý...')
+                                    : (isEdit ? 'Cập nhật video' : 'Đăng video')}
+                            </Button>
+                            <Button
+                                onClick={handleCancel}
+                                type="button"
+                                className="w-1/4 ml-[40] bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 shadow rounded-md"
+                                disabled={imageLoading || videoLoading}
+                            >
+                                Hủy
+                            </Button>
+                        </div>
                     </form>
                 </CardContent>
             </Card>
