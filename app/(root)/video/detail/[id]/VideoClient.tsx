@@ -2,26 +2,38 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
-import type { VideoDetail } from '@/types/video';
+import type { VideoDetail, VideoResponse } from '@/types/video';
 import { getFullPath } from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
+// import dynamic from 'next/dynamic';
+// const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false });
 import { ThumbsUp, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
 import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
+import { RelatedVideoItemOnPlayer } from '@/components/video/item-video';
 
 export default function VideoClient({
     id,
     video,
+    relatedVideos,
 }: {
     id: string;
     video: VideoDetail | null;
+    relatedVideos: VideoResponse[] | null;
 }) {
     const isAuthenticated = useIsAuthenticated();
     const [isLiked, setIsLiked] = useState(false);
-
+    const [showOverlay, setShowOverlay] = useState(false);
+    const handleVideoEnd = () => {
+        setShowOverlay(true);
+    };
+    const handlePlay = () => {
+        // If user presses play again after video ends, hide overlay
+        setShowOverlay(false);
+    };
     useEffect(() => {
         const checkLike = async () => {
             if (!video) return;
@@ -36,13 +48,14 @@ export default function VideoClient({
     }, [id, video]);
 
     if (!video) return <div className="p-4 text-red-500">Không tìm thấy video</div>;
-
+    console.log(relatedVideos)
     return (
         <div className="w-full">
             <div className="w-full max-w-4xl mx-auto">
                 <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
                     <Suspense fallback={<div>Loading...</div>}>
                         <ReactPlayer
+                            // key={retryKey}
                             url={getFullPath(video.path)}
                             width="100%"
                             height="100%"
@@ -50,7 +63,23 @@ export default function VideoClient({
                             controls
                             muted
                             className="absolute top-0 left-0"
+                            // onError={(e) => {
+                            //     console.warn('Retrying video load...');
+                            //     console.error('Video load error:', e);
+                            //     setTimeout(() => setRetryKey((k) => k + 1), 500);
+                            // }}
+                            onEnded={handleVideoEnd}
+                            onPlay={handlePlay}
                         />
+                        {showOverlay && relatedVideos  && (
+                            <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-white p-6 z-10" style={{margin: '10px 10px 80px', opacity: 0.9, borderRadius:'10px'}}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {relatedVideos.map((video,index) => (
+                                        index < 4 ?<RelatedVideoItemOnPlayer key={video.id} video={video} />:''
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </Suspense>
                 </div>
                 <div className="flex flex-col gap-4">

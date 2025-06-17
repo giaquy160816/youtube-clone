@@ -58,7 +58,7 @@ export default async function Page({ params }: Props) {
     return (
         <div className="w-full flex flex-col md:flex-row gap-8 max-w-6xl mx-auto mt-10 px-2">
             <div className="flex-1 min-w-0">
-                <VideoClient id={id} video={isValid ? video : null} />
+                <VideoClient id={id} video={isValid ? video : null} relatedVideos={relatedVideos} />
                 {isValid && <CommentSection videoId={id} />}
             </div>
             <aside className="w-full md:w-[320px] flex-shrink-0">

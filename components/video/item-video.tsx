@@ -23,6 +23,22 @@ export function RelatedVideoItem({ video }: { video: VideoResponse }) {
     );
 }
 
+export function RelatedVideoItemOnPlayer({ video }: { video: VideoResponse }) {
+    return (
+        <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="cursor-pointer transform hover:scale-105 transition">
+                <Image
+                    src={getFullPath(video.image) || ''}
+                    alt={video.title}
+                    width={150}
+                    height={100}
+                    className="w-full rounded-lg shadow-md"
+                    loading="lazy"
+                />
+                <p className="mt-2 text-center text-sm">{video.title}</p>
+        </Link>
+    );
+}
+
 export default function VideoCard({ video }: { video: VideoResponse }) {
     return (
         <div className="bg-card">
