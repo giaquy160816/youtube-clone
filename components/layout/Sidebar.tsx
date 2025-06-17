@@ -1,12 +1,9 @@
-'use client';
-
 import { PATH } from "@/lib/constants/paths";
 import {
     Home,
     Clock,
     Video,
     ListVideo,
-    Clock3,
     ThumbsUp,
     Youtube,
     X

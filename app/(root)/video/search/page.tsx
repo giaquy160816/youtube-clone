@@ -14,7 +14,7 @@ export default function SearchPage() {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false); // mặc định false
 
-    const { searchVideos, loading, total, limit } = useVideoSearch({
+    const { searchVideos, loading, limit } = useVideoSearch({
         onSearch: (results, currentPage, total) => {
             if (currentPage === 1) {
                 setVideos(results);
