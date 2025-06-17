@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { VideoDetail, VideoResponse } from '@/types/video';
 import { getFullPath } from '@/lib/utils/get-full-path';
@@ -24,7 +24,8 @@ export default function VideoClient({
     video: VideoDetail | null;
     relatedVideos: VideoResponse[] | null;
 }) {
-    const isAuthenticated = useIsAuthenticated();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const rawAuth = useIsAuthenticated();
     const [isLiked, setIsLiked] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const handleVideoEnd = () => {
@@ -35,8 +36,12 @@ export default function VideoClient({
         setShowOverlay(false);
     };
     useEffect(() => {
+        if (rawAuth) setIsAuthenticated(true);
+    }, [rawAuth]);
+
+    useEffect(() => {
+        if (!video) return;
         const checkLike = async () => {
-            if (!video) return;
             try {
                 const res = await api(API_ENDPOINTS.user.video.checkLike(id), { method: 'GET' }) as { isLiked: boolean };
                 setIsLiked(res?.isLiked || false);
@@ -44,6 +49,7 @@ export default function VideoClient({
                 console.warn('Không kiểm tra được like:', err);
             }
         };
+
         checkLike();
     }, [id, video]);
 
@@ -86,8 +92,9 @@ export default function VideoClient({
                             <Image
                                 src={getFullPath(video.avatar)}
                                 alt={video.author}
-                                fill
-                                className="rounded-full object-cover"
+                                width={400}
+                                height={400}
+                                className="rounded-full object-cover w-full h-full"
                             />
                         </div>
                         <div className="flex flex-col">

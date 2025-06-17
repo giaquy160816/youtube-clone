@@ -61,28 +61,25 @@ export function Sidebar({
                 <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
                     <Home size={18} /> Trang chủ
                 </Link>
-                <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                {/* <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
                     <ListVideo size={18} /> Kênh đăng ký
-                </Link>
+                </Link> */}
             </div>
 
             <hr className="border-border dark:border-primary-foreground my-3" />
 
             <div className="text-sm text-muted-foreground px-3">Bạn</div>
             <div className="space-y-1">
-                <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
-                    <Clock size={18} /> Video đã xem
-                </Link>
-                <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
-                    <ListVideo size={18} /> Danh sách phát
-                </Link>
-                <Link href={PATH.VIDEO_MANAGE} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.ME.VIDEO_MANAGE} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
                     <Video size={18} /> Video của bạn
                 </Link>
-                <Link href={PATH.VIDEO_MANAGE} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
-                    <Clock3 size={18} /> Xem sau
+                <Link href={PATH.ME.VIDEO_WATCHED} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                    <Clock size={18} /> Video đã xem
                 </Link>
-                <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.ME.VIDEO_PLAYLIST} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                    <ListVideo size={18} /> Danh sách phát
+                </Link>
+                <Link href={PATH.ME.VIDEO_LIKED} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
                     <ThumbsUp size={18} /> Video đã thích
                 </Link>
             </div>

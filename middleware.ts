@@ -1,6 +1,9 @@
+// middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { PATH } from '@/lib/constants/paths';
 
-const protectedRoutes = ['/dashboard', '/profile', '/settings'];
+const protectedRoutes = Object.values(PATH.ME).filter((v): v is string => typeof v === 'string');
+console.log('protectedRoutes', protectedRoutes);
 const guestOnlyRoutes = ['/login', '/register'];
 
 function match(path: string, routes: string[]) {
@@ -24,6 +27,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
+        '/me/:path*',
         '/dashboard/:path*',
         '/profile/:path*',
         '/settings/:path*',

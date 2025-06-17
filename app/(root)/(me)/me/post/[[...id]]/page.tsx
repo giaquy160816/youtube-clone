@@ -1,7 +1,7 @@
 // app/(root)/video/post/page.tsx
 "use client"
 import React, { useState, useEffect } from 'react'
-import { redirect, useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -14,12 +14,13 @@ import { notify } from '@/lib/utils/noti'
 import Image from 'next/image'
 import { getFullPath } from '@/lib/utils/get-full-path'
 import { TagInput } from "@/components/ui/tag-input"
+import { PATH } from '@/lib/constants/paths'
 
 const PostVideoPage = () => {
     const params = useParams()
     const id = Array.isArray(params.id) ? params.id[0] : params.id
     const isEdit = !!id
-
+    const router = useRouter()
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -102,13 +103,17 @@ const PostVideoPage = () => {
                 setUploadProgress(0);
                 setPreview('');
             }
+            if (isEdit) {
+                console.log('isEdit', isEdit);
+                router.push(PATH.ME.VIDEO_MANAGE);
+            }
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Lỗi xử lý video';
             notify.error(errorMessage);
         }
     };
     const handleCancel = () => {
-        redirect('/me/manage')
+        router.push(PATH.ME.VIDEO_MANAGE);
     };
 
     return (

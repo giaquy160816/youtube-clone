@@ -7,7 +7,7 @@ import { getFullPath } from '@/lib/utils/get-full-path';
 export function RelatedVideoItem({ video }: { video: VideoResponse }) {
     return (
         <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="flex gap-2 items-center mb-3 hover:bg-accent rounded p-1 transition">
-            <div className="relative w-[80px] h-[45px] flex-shrink-0 rounded overflow-hidden">
+            <div className="relative w-[80px] h-[45px] flex-shrink-0 rounded overflow-hidden relative aspect-[16/9]">
                 <Image
                     src={getFullPath(video.image) || ''}
                     alt={video.title}
@@ -42,13 +42,14 @@ export function RelatedVideoItemOnPlayer({ video }: { video: VideoResponse }) {
 export default function VideoCard({ video }: { video: VideoResponse }) {
     return (
         <div className="bg-card">
-            <figure className="relative aspect-video w-full rounded-xl overflow-hidden mb-2">
-                <Link href={PATH.VIDEO_DETAIL(video.id) || ''}>
+            <figure className="relative w-full rounded-xl overflow-hidden mb-2 relative aspect-[16/9]">
+                <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="w-full h-full">
                     <Image
                         src={getFullPath(video.image) || ''}
                         alt={video.title}
-                        fill
-                        className="object-cover"
+                        width={550}
+                        height={309}
+                        className="object-cover w-full h-full"
                         loading="lazy"
                     />
                 </Link>

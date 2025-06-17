@@ -41,23 +41,23 @@ export function UserMenu() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
-                    <Link href={PATH.PROFILE}>
+                    <Link href={PATH.ME.PROFILE}>
                         Cập nhật thông tin
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
-                    <Link href={PATH.VIDEO_MANAGE}>
+                    <Link href={PATH.ME.VIDEO_MANAGE}>
                         Video của tôi
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
-                    <Link href={PATH.VIDEO_POST}>
+                    <Link href={PATH.ME.VIDEO_POST}>
                         Đăng video
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="cursor-pointer hover:text-white">
-                    <Link href={PATH.LOGOUT}>
+                    <Link href={PATH.ME.LOGOUT}>
                         Đăng xuất
                     </Link>
                 </DropdownMenuItem>

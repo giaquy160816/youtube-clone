@@ -82,7 +82,7 @@ export default function VideoManagePage() {
         <div className="p-6 space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-semibold">Quản lý Video</h1>
-                <Link href={PATH.VIDEO_POST}>
+                <Link href={PATH.ME.VIDEO_POST}>
                     <Button size="sm" className="rounded-xl">+ Thêm Video</Button>
                 </Link>
             </div>
@@ -125,7 +125,7 @@ export default function VideoManagePage() {
                                         <div className="flex gap-2">
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link href={PATH.VIDEO_EDIT(video.id)}>
+                                                    <Link href={PATH.ME.VIDEO_EDIT((video.id))}>
                                                         <Button size="icon" variant="outline" className="w-8 h-8">
                                                             <Pencil className="h-4 w-4" />
                                                         </Button>

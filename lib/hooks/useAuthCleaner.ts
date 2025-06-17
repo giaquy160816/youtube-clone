@@ -16,10 +16,11 @@ export function useAuthCleaner() {
 
         const checkAndClean = async () => {
             if (stopped) return;
-
+            const accessToken = Cookies.get('access_token');
             const expired = parseInt(localStorage.getItem('user_expired') || '0', 10);
+
+            if (!accessToken || !expired) return;
             if (Date.now() > expired) {
-                // Clear token info
                 localStorage.removeItem('user_info');
                 localStorage.removeItem('user_expired');
 
@@ -27,6 +28,7 @@ export function useAuthCleaner() {
                 Cookies.remove('user_info');
 
                 try {
+                    console.log('refreshToken');
                     const response = await api<AuthResponse>(
                         API_ENDPOINTS.auth.refreshToken,
                         {
@@ -43,12 +45,13 @@ export function useAuthCleaner() {
                     console.warn('⚠️ Refresh token failed:', error);
                     notify.error('Refresh token failed');
                 }
+
                 stopped = true;
             }
         };
 
         checkAndClean();
-        const interval = setInterval(checkAndClean, 30 * 1000);
+        const interval = setInterval(checkAndClean, 30 *1000); // mỗi 1 giây
         return () => clearInterval(interval);
     }, [handleLogin]);
 }
