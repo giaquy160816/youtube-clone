@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import type { VideoDetail, VideoResponse } from '@/types/video';
 import { getFullPath } from '@/lib/utils/get-full-path';
@@ -14,6 +14,7 @@ import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
 import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { RelatedVideoItemOnPlayer } from '@/components/video/item-video';
+import { useRouter } from 'next/navigation';
 
 export default function VideoClient({
     id,
@@ -28,12 +29,17 @@ export default function VideoClient({
     const rawAuth = useIsAuthenticated();
     const [isLiked, setIsLiked] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
+    const router = useRouter();
+    const playerRef = useRef<ReactPlayer>(null);
+    const [isPlaying, setIsPlaying] = useState(true);
     const handleVideoEnd = () => {
         setShowOverlay(true);
+        setIsPlaying(false);
     };
     const handlePlay = () => {
         // If user presses play again after video ends, hide overlay
         setShowOverlay(false);
+        setIsPlaying(true);
     };
     useEffect(() => {
         if (rawAuth) setIsAuthenticated(true);
@@ -41,7 +47,7 @@ export default function VideoClient({
 
     useEffect(() => {
         if (!video || !rawAuth) return;
-    
+
         const checkLike = async () => {
             try {
                 const res = await api(API_ENDPOINTS.user.video.checkLike(id), { method: 'GET' }) as { isLiked: boolean };
@@ -62,7 +68,7 @@ export default function VideoClient({
                 console.warn('Không kiểm tra được watched:', err);
             }
         };
-    
+
         const sendWatched = async () => {
             try {
                 await api(API_ENDPOINTS.user.video.watched, { method: 'POST' }, { id: parseInt(id) });
@@ -79,32 +85,69 @@ export default function VideoClient({
         <div className="w-full">
             <div className="w-full max-w-4xl mx-auto">
                 <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
-                        <ReactPlayer
-                            // key={retryKey}
-                            url={getFullPath(video.path)}
-                            width="100%"
-                            height="100%"
-                            playing
-                            controls
-                            muted
-                            className="absolute top-0 left-0"
-                            // onError={(e) => {
-                            //     console.warn('Retrying video load...');
-                            //     console.error('Video load error:', e);
-                            //     setTimeout(() => setRetryKey((k) => k + 1), 500);
-                            // }}
-                            onEnded={handleVideoEnd}
-                            onPlay={handlePlay}
-                        />
-                        {showOverlay && relatedVideos  && (
-                            <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-white p-6 z-10" style={{margin: '10px 10px 80px', opacity: 0.9, borderRadius:'10px'}}>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {relatedVideos.map((video,index) => (
-                                        index < 4 ?<RelatedVideoItemOnPlayer key={video.id} video={video} />:''
-                                    ))}
-                                </div>
+                    <ReactPlayer
+                        ref={playerRef}
+                        // key={retryKey}
+                        url={getFullPath(video.path)}
+                        width="100%"
+                        height="100%"
+                        playing={isPlaying}
+                        controls
+                        muted
+                        className="absolute top-0 left-0"
+                        // onError={(e) => {
+                        //     console.warn('Retrying video load...');
+                        //     console.error('Video load error:', e);
+                        //     setTimeout(() => setRetryKey((k) => k + 1), 500);
+                        // }}
+                        onEnded={handleVideoEnd}
+                        onPlay={handlePlay}
+                    />
+                    {showOverlay && relatedVideos && (
+                        <div className="absolute inset-0 bg-[#000000]/80 flex flex-col items-center justify-center text-white">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {relatedVideos.map((video, index) => (
+
+                                    index < 4 ? <RelatedVideoItemOnPlayer key={video.id} video={video} /> : ''
+                                ))}
                             </div>
-                        )}
+                            <div className="flex flex-row gap-4 mt-6">
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => router.back()}
+                                >
+                                    Quay về
+                                </Button>
+                                <Button
+                                    variant="default"
+                                    onClick={() => {
+                                        setShowOverlay(false);
+                                        setIsPlaying(true);
+                                        if (playerRef.current) {
+                                            playerRef.current.seekTo(0, 'seconds');
+                                        }
+                                    }}
+                                >
+                                    Xem lại
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="bg-muted text-primary"
+                                    disabled={!relatedVideos || relatedVideos.length === 0}
+                                    onClick={() => {
+                                        if (!relatedVideos || relatedVideos.length === 0) return;
+                                        const randomIdx = Math.floor(Math.random() * relatedVideos.length);
+                                        const randomVideo = relatedVideos[randomIdx];
+                                        if (randomVideo && randomVideo.id) {
+                                            router.push(`/video/detail/${randomVideo.id}`);
+                                        }
+                                    }}
+                                >
+                                    Video ngẫu nhiên
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className="flex flex-col gap-4">
                     <div className="flex items-start gap-4">
