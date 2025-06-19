@@ -31,6 +31,10 @@ export const API_ENDPOINTS = {
             like: `/backend/like`,
             dislike: (id: string) => `/backend/like/${id}`,
             checkLike: (id: string) => `/backend/like/check/${id}`,
+            watched: `/backend/watched`,
+            listWatched: `/backend/watched/list`,
+            checkWatched: (id: string) => `/backend/watched/${id}`,
+            deleteWatched: (id: string) => `/backend/watched/${id}`,
         }
     },
 } as const;

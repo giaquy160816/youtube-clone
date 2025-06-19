@@ -17,7 +17,6 @@ export async function getVideoDetail(id: string): Promise<VideoDetail | null> {
     const res = await apiGet<{ data: VideoDetail }>(
         API_ENDPOINTS.video.detail(id)
     );
-    console.log(res);
 
     if ('error' in res) {
         return null;

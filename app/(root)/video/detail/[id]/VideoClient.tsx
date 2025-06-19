@@ -40,7 +40,8 @@ export default function VideoClient({
     }, [rawAuth]);
 
     useEffect(() => {
-        if (!video) return;
+        if (!video || !rawAuth) return;
+    
         const checkLike = async () => {
             try {
                 const res = await api(API_ENDPOINTS.user.video.checkLike(id), { method: 'GET' }) as { isLiked: boolean };
@@ -50,11 +51,30 @@ export default function VideoClient({
             }
         };
 
+        const checkWatched = async () => {
+            try {
+                const resCKW = await api(API_ENDPOINTS.user.video.checkWatched(id), { method: 'GET' }) as { isWatched: boolean };
+                console.log('resCKW?.isWatched', resCKW?.isWatched);
+                if (resCKW?.isWatched === false) {
+                    sendWatched();
+                }
+            } catch (err) {
+                console.warn('Không kiểm tra được watched:', err);
+            }
+        };
+    
+        const sendWatched = async () => {
+            try {
+                await api(API_ENDPOINTS.user.video.watched, { method: 'POST' }, { id: parseInt(id) });
+            } catch (err) {
+                console.warn('Không gửi được watched:', err);
+            }
+        };
+        checkWatched();
         checkLike();
-    }, [id, video]);
+    }, [id, video, rawAuth]);
 
     if (!video) return <div className="p-4 text-red-500">Không tìm thấy video</div>;
-    console.log(relatedVideos)
     return (
         <div className="w-full">
             <div className="w-full max-w-4xl mx-auto">

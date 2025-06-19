@@ -52,7 +52,9 @@ export default async function Page({ params }: Props) {
         if (res && !('error' in res) && Array.isArray(res.data)) {
             relatedVideos = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 6);
         }
-    } catch {}
+    } catch (error) {
+        console.error('Error fetching related videos:', error);
+    }
 
     return (
         <div className="w-full flex flex-col md:flex-row gap-8 max-w-6xl mx-auto mt-10 px-2">
