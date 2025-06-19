@@ -23,6 +23,7 @@ import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
 import { useLoginHandler } from '@/lib/hooks/useLoginHandler';
 import { toast } from "sonner";
 import { notify } from "@/lib/utils/noti";
+import Link from "next/link";
 
 export default function LoginPage() {
     const handleLogin = useLoginHandler();
@@ -73,52 +74,6 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">
-                        <div className="space-y-1">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="you@example.com"
-                                autoComplete="off"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <Label htmlFor="password">Mật khẩu</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Mật khẩu"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-
-                        {error && (
-                            <div className="text-red-600 text-sm">
-                                {error}
-                            </div>
-                        )}
-
-                        <Button
-                            type="submit"
-                            className="w-full h-10 rounded-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition"
-                            disabled={loading}
-                        >
-                            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-                        </Button>
-
-                        <div className="relative my-4">
-                            <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t border-border" />
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="bg-card px-3 text-muted-foreground">HOẶC</span>
-                            </div>
-                        </div>
 
                         <Button
                             type="button"
@@ -139,6 +94,11 @@ export default function LoginPage() {
                             <FcGoogle size={20} />
                             Đăng nhập với Google
                         </Button>
+                        <Link href={process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}>
+                            <Button variant="outline" className="w-full gap-2 bg-[#000] text-white">
+                                Trang Chủ
+                            </Button>
+                        </Link>
                     </CardContent>
                 </form>
             </Card>

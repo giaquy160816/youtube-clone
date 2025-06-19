@@ -16,6 +16,7 @@ export const viewport: Viewport = {
     // interactiveWidget: 'resizes-visual',
 }
 export const metadata: Metadata = {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
     title: "YouTube Clone",
     description: "Next.js 15 + Tailwind + Shadcn",
 };
