@@ -32,6 +32,15 @@ export default function VideoClient({
     const router = useRouter();
     const playerRef = useRef<ReactPlayer>(null);
     const [isPlaying, setIsPlaying] = useState(true);
+    const description = video? video.description: null;
+    const [expanded, setExpanded] = useState(false);
+    const length = 100;
+    const words = description ? description.trim().split(/\s+/) : null;
+    const isLong = words ? words.length > length : false;
+    const shortText = words ? words.slice(0, length).join(' ') : null;
+    const displayText = expanded || !isLong
+        ? description
+        : shortText;
     const handleVideoEnd = () => {
         setShowOverlay(true);
         setIsPlaying(false);
@@ -203,7 +212,25 @@ export default function VideoClient({
                     {/* Description Block */}
                     <div className="p-4 rounded-lg mb-3 w-full border border-border">
                         <div className="font-semibold mb-2 text-base">Mô tả</div>
-                        <p className="whitespace-pre-wrap text-sm text-foreground">{video.description}</p>
+                        <p className="whitespace-pre-wrap text-sm text-foreground">
+                            {displayText}
+                            {isLong && !expanded && (
+                            <span
+                                className="text-blue-600 hover:underline cursor-pointer" style={{paddingLeft:'10px'}}
+                                onClick={() => setExpanded(true)}
+                            >
+                                ...Xem thêm
+                            </span>
+                            )}
+                            {isLong && expanded && (
+                            <p
+                                className="text-blue-600 hover:underline cursor-pointer" style={{paddingTop:'20px'}}
+                                onClick={() => setExpanded(false)}
+                            >
+                                Thu gọn
+                            </p>
+                            )}
+                        </p>
                     </div>
                     {/* Tags Block */}
                     {video.tags && video.tags.length > 0 && (
