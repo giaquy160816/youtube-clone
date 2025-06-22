@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { PATH } from "@/lib/constants/paths";
 import { useUser } from "@/lib/context/UserContext";
-import { getFullPath } from "@/lib/utils/get-full-path";
+import getFullPath from "@/lib/utils/get-full-path";
 
 export function UserMenu() {
     const { user } = useUser();

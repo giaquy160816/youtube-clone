@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { VideoResponse } from '@/types/video';
 import { PATH } from '@/lib/constants/paths';
-import { getFullPath } from '@/lib/utils/get-full-path';
+import getFullPath from '@/lib/utils/get-full-path';
 
 export function RelatedVideoItem({ video }: { video: VideoResponse }) {
     return (

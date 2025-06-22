@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import type { VideoDetail, VideoResponse } from '@/types/video';
-import { getFullPath } from '@/lib/utils/get-full-path';
+import getFullPath from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
 // import dynamic from 'next/dynamic';
 // const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false });

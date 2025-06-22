@@ -48,7 +48,8 @@ export default async function Page({ params }: Props) {
     let relatedVideos: VideoResponse[] = [];
     let relatedVideosSmall: VideoResponse[] = [];
     try {
-        const urlGetRelatedVideos = API_ENDPOINTS.video.list + '?q='+video?.tags?.join(',')+'&page=1&limit=7';
+        const tags = video?.tags?.join(',') || '';
+        const urlGetRelatedVideos = API_ENDPOINTS.video.list + '?q=' + encodeURIComponent(tags) + '&page=1&limit=7';
         const res = await apiGet<{ data: VideoResponse[] } | { error: string }>(urlGetRelatedVideos);
         if (res && !('error' in res) && Array.isArray(res.data)) {
             relatedVideos = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 6);

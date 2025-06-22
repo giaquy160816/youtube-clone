@@ -13,7 +13,7 @@ import { API_ENDPOINTS } from "@/lib/api/end-points";
 import { api, apiGet } from "@/lib/api/fetcher";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getFullPath } from "@/lib/utils/get-full-path";
+import getFullPath from "@/lib/utils/get-full-path";
 import { responseSuccess } from "@/types/api";
 
 type VideoItem = {

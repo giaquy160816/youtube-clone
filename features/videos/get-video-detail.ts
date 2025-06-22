@@ -7,6 +7,7 @@ const videoCache = new InMemoryCache<VideoDetail>(60 * 1000); // TTL 1 phút
 
 export async function getVideoDetail(id: string): Promise<VideoDetail | null> {
     const videoId = parseInt(id);
+    console.log('videoId', videoId);
     if (isNaN(videoId)) {
         console.warn('❌ Invalid video ID:', id);
         return null;

@@ -12,7 +12,7 @@ import { API_ENDPOINTS } from '@/lib/api/end-points'
 import { api } from '@/lib/api/fetcher'
 import { notify } from '@/lib/utils/noti'
 import Image from 'next/image'
-import { getFullPath } from '@/lib/utils/get-full-path'
+import getFullPath from '@/lib/utils/get-full-path'
 import { TagInput } from "@/components/ui/tag-input"
 import { PATH } from '@/lib/constants/paths'
 
@@ -21,6 +21,9 @@ const PostVideoPage = () => {
     const id = Array.isArray(params.id) ? params.id[0] : params.id
     const isEdit = !!id
     const router = useRouter()
+    
+    const [loading, setLoading] = useState(isEdit); 
+
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -49,27 +52,33 @@ const PostVideoPage = () => {
         onProgress: (progress) => setUploadProgress(progress)
     });
 
-    // Fetch video data if editing
     useEffect(() => {
-        if (isEdit) {
-            (async () => {
-                try {
-                    const res = await api(API_ENDPOINTS.user.video.detail(id), { method: 'GET' }) as { title?: string; description?: string; image?: string; path?: string; isActive?: boolean; tags?: string[] };
-                    setForm({
-                        title: res.title || '',
-                        description: res.description || '',
-                        image: res.image || '',
-                        path: res.path || '',
-                        isActive: res.isActive ?? true,
-                        tags: res.tags || []
-                    });
-                    setPreview(getFullPath(res.image || ''));
-                } catch (err: unknown) {
-                    const errorMessage = err instanceof Error ? err.message : 'Lỗi xử lý video';
-                    notify.error(errorMessage);
-                }
-            })();
+        if (!isEdit) {
+            return;
         }
+        
+        setLoading(true);
+        (async () => {
+            try {
+                const res = await api(API_ENDPOINTS.user.video.detail(id), { method: 'GET' }) as any;
+                setForm({
+                    title: res.title || '',
+                    description: res.description || '',
+                    image: res.image || '',
+                    path: res.path || '',
+                    isActive: res.isActive ?? true,
+                    tags: res.tags || []
+                });
+                if (res.image) {
+                    setPreview(getFullPath(res.image));
+                }
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : 'Lỗi tải dữ liệu video';
+                notify.error(errorMessage);
+            } finally {
+                setLoading(false);
+            }
+        })();
     }, [isEdit, id, setPreview]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -91,7 +100,10 @@ const PostVideoPage = () => {
                 res = await api(API_ENDPOINTS.user.video.post, { method: 'POST' }, form);
             }
             notify.success((res as { message?: string })?.message || (isEdit ? 'Cập nhật video thành công' : 'Đăng video thành công'));
-            if (!isEdit) {
+            
+            if (isEdit) {
+                router.push(PATH.ME.VIDEO_MANAGE);
+            } else {
                 setForm({
                     title: '',
                     description: '',
@@ -103,10 +115,6 @@ const PostVideoPage = () => {
                 setUploadProgress(0);
                 setPreview('');
             }
-            if (isEdit) {
-                console.log('isEdit', isEdit);
-                router.push(PATH.ME.VIDEO_MANAGE);
-            }
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Lỗi xử lý video';
             notify.error(errorMessage);
@@ -115,6 +123,20 @@ const PostVideoPage = () => {
     const handleCancel = () => {
         router.push(PATH.ME.VIDEO_MANAGE);
     };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="flex flex-col items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-10 w-10 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p className="mt-4 text-lg">Đang tải dữ liệu, vui lòng chờ...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-2xl mx-auto p-6">

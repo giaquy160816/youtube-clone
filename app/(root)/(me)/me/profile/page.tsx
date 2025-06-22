@@ -13,7 +13,7 @@ import { notify } from '@/lib/utils/noti';
 import type { UserInfo } from '@/types/auth';
 import { getUserInfo } from '@/lib/auth/get-info';
 import { useUser } from '@/lib/context/UserContext';
-import { getFullPath } from '@/lib/utils/get-full-path';
+import getFullPath from '@/lib/utils/get-full-path';
 
 const ProfilePage = () => {
     const [form, setForm] = useState({

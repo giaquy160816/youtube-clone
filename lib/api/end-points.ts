@@ -1,6 +1,7 @@
 // lib/api/end-points.ts
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+// Sử dụng proxy API thay vì gọi trực tiếp đến backend
+export const API_BASE_URL = '/api/proxy';
 
 export const API_ENDPOINTS = {
     auth: {
@@ -36,5 +37,13 @@ export const API_ENDPOINTS = {
             checkWatched: (id: string) => `/backend/watched/${id}`,
             deleteWatched: (id: string) => `/backend/watched/${id}`,
         }
+    },
+    comment: {
+        create: '/backend/comment',
+        getByVideo: (videoId: string) => `/backend/comment/video/${videoId}`,
+        update: (id: string) => `/backend/comment/${id}`,
+        delete: (id: string) => `/backend/comment/${id}`,
+        like: (id: string) => `/backend/comment/${id}/like`,
+        dislike: (id: string) => `/backend/comment/${id}/dislike`,
     },
 } as const;

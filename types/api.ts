@@ -27,3 +27,29 @@ export type VideoListParams = PaginationParams & {
 export type responseSuccess = {
     message: string;
 }
+
+export type CommentParams = {
+    content: string;
+    videoId: string;
+    parentId?: string;
+};
+
+export type CommentResponse = {
+    id: string;
+    content: string;
+    videoId: string;
+    userId: string;
+    parentId?: string;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+        id: string;
+        name: string;
+        avatar?: string;
+    };
+    likes: number;
+    dislikes: number;
+    isLiked?: boolean;
+    isDisliked?: boolean;
+    replies?: CommentResponse[];
+};

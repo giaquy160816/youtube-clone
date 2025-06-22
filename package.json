@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:security": "node scripts/test-security.js",
+    "test:media": "node scripts/test-media.js",
+    "debug:proxy": "node scripts/debug-proxy.js",
+    "test:fix": "node scripts/test-fix.js",
+    "test:url": "node scripts/test-url.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
@@ -23,6 +28,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.511.0",
     "next": "^15.3.3",
+    "node-fetch": "^3.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",

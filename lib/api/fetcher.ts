@@ -1,6 +1,7 @@
 // lib/api/fetcher.ts
 
-import { API_BASE_URL } from '@/lib/api/end-points';
+import { SecurityUtils } from '@/lib/utils/security';
+import { createApiUrl } from '@/lib/utils/url';
 
 function getAccessTokenFromCookie(): string | null {
     if (typeof document === 'undefined') return null; // SSR guard
@@ -32,7 +33,16 @@ export async function api<TResponse = unknown, TRequest = unknown>(
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        // Mã hóa endpoint để ẩn khỏi network tab
+        const encryptedEndpoint = SecurityUtils.encryptEndpoint(endpoint);
+        
+        // Tạo URL hợp lệ sử dụng utility function
+        const url = createApiUrl(encryptedEndpoint);
+        
+        console.log('🌐 Fetching URL:', url);
+        
+        // Sử dụng proxy API để ẩn backend URL
+        const res = await fetch(url, {
             ...options,
             method: options.method || (body ? 'POST' : 'GET'),
             headers,

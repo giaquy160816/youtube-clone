@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { notify } from '@/lib/utils/noti';
-import { getFullPath } from '@/lib/utils/get-full-path';
+import getFullPath from '@/lib/utils/get-full-path';
 
 type FileType = 'image' | 'video';
 
