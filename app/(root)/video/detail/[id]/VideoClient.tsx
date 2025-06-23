@@ -148,45 +148,31 @@ export default function VideoClient({
                         onPlay={handlePlay}
                     />
                     {showOverlay && relatedVideos && (
-                        <div className="absolute inset-0 bg-[#000000]/80 flex flex-col items-center justify-center text-white">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {relatedVideos.map((video, index) => (
-
-                                    index < 4 ? <RelatedVideoItemOnPlayer key={video.id} video={video} /> : ''
-                                ))}
+                        <div className="absolute inset-0 bg-[#000000]/80 flex flex-col h-full w-full text-white">
+                            <div className="flex-1 w-full flex items-center justify-center p-4">
+                                <div className="grid grid-cols-2 flex-1 grid-rows-2 gap-4 w-full h-full max-w-2xl">
+                                    {relatedVideos.slice(0, 4).map((video) => (
+                                        <div key={video.id} className="flex flex-col h-full min-h-0 bg-transparent">
+                                            <RelatedVideoItemOnPlayer video={video} />
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-row gap-4 mt-6">
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => router.back()}
-                                >
-                                    Quay về
-                                </Button>
-                                <Button
-                                    variant="default"
-                                    onClick={() => {
-                                        setShowOverlay(false);
-                                        setIsPlaying(true);
-                                        if (playerRef.current) {
-                                            playerRef.current.seekTo(0, 'seconds');
-                                        }
-                                    }}
-                                >
-                                    Xem lại
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="bg-muted text-primary"
+                            <div className="flex flex-row gap-4 w-full items-center justify-center my-2 h-[30px] min-h-[30px] max-h-[30px]">
+                                <Button variant="secondary" onClick={() => router.back()} className="h-[30px] px-4">Quay về</Button>
+                                <Button variant="default" onClick={() => {
+                                    setShowOverlay(false);
+                                    setIsPlaying(true);
+                                    if (playerRef.current) playerRef.current.seekTo(0, 'seconds');
+                                }} className="h-[30px] px-4">Xem lại</Button>
+                                <Button variant="outline" className="bg-muted text-primary h-[30px] px-4"
                                     disabled={!relatedVideos || relatedVideos.length === 0}
                                     onClick={() => {
                                         if (!relatedVideos || relatedVideos.length === 0) return;
                                         const randomIdx = Math.floor(Math.random() * relatedVideos.length);
                                         const randomVideo = relatedVideos[randomIdx];
-                                        if (randomVideo && randomVideo.id) {
-                                            router.push(`/video/detail/${randomVideo.id}`);
-                                        }
-                                    }}
-                                >
+                                        if (randomVideo && randomVideo.id) router.push(`/video/detail/${randomVideo.id}`);
+                                    }}>
                                     Video ngẫu nhiên
                                 </Button>
                             </div>
@@ -389,52 +375,52 @@ export default function VideoClient({
                                         <>
                                             <span className="truncate max-w-[100px]">{pl.name}</span>
                                             <div className="flex items-center gap-2">
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                disabled={playlistLoading || addToId === pl.id}
-                                                onClick={async () => {
-                                                    setAddToId(pl.id);
-                                                    const ok = await addVideoToPlaylist(pl.id, id);
-                                                    setAddToId(null);
-                                                    if (ok) {
-                                                        toast.success('Đã thêm video vào playlist!');
-                                                    } else {
-                                                        toast.error(playlistError || 'Thêm video thất bại!');
-                                                    }
-                                                }}
-                                            >
-                                                {addToId === pl.id ? 'Đang thêm...' : '+'}
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => {
-                                                    setEditId(pl.id);
-                                                    setEditName(pl.name);
-                                                }}
-                                            >
-                                                <Edit className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="destructive"
-                                                onClick={async () => {
-                                                    if (window.confirm('Bạn chắc chắn muốn xoá playlist này?')) {
-                                                        setDeleteId(pl.id);
-                                                        const ok = await deletePlaylist(pl.id);
-                                                        setDeleteId(null);
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    disabled={playlistLoading || addToId === pl.id}
+                                                    onClick={async () => {
+                                                        setAddToId(pl.id);
+                                                        const ok = await addVideoToPlaylist(pl.id, id);
+                                                        setAddToId(null);
                                                         if (ok) {
-                                                            toast.success('Đã xoá playlist!');
+                                                            toast.success('Đã thêm video vào playlist!');
                                                         } else {
-                                                            toast.error(playlistError || 'Xoá playlist thất bại!');
+                                                            toast.error(playlistError || 'Thêm video thất bại!');
                                                         }
-                                                    }
-                                                }}
-                                                disabled={playlistLoading || deleteId === pl.id}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                                    }}
+                                                >
+                                                    {addToId === pl.id ? 'Đang thêm...' : '+'}
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        setEditId(pl.id);
+                                                        setEditName(pl.name);
+                                                    }}
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="destructive"
+                                                    onClick={async () => {
+                                                        if (window.confirm('Bạn chắc chắn muốn xoá playlist này?')) {
+                                                            setDeleteId(pl.id);
+                                                            const ok = await deletePlaylist(pl.id);
+                                                            setDeleteId(null);
+                                                            if (ok) {
+                                                                toast.success('Đã xoá playlist!');
+                                                            } else {
+                                                                toast.error(playlistError || 'Xoá playlist thất bại!');
+                                                            }
+                                                        }
+                                                    }}
+                                                    disabled={playlistLoading || deleteId === pl.id}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
                                             </div>
                                         </>
                                     )}

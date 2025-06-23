@@ -30,16 +30,21 @@ export function RelatedVideoItemOnPlayer({ video }: { video: VideoResponse }) {
     console.log('video', video);
 
     return (
-        <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="cursor-pointer transform hover:scale-105 transition">
-            <Image
-                src={getFullPath(video.image) || ''}
-                alt={video.title}
-                width={150}
-                height={100}
-                className="w-full rounded-lg shadow-md"
-                loading="lazy"
-            />
-            <p className="mt-2 text-center text-sm">{video.title}</p>
+        <Link href={PATH.VIDEO_DETAIL(video.id) || ''} 
+        className="cursor-pointer transform hover:scale-105 transition w-full h-full object-cover rounded flex flex-col flex-1">
+            <div className="relative w-full h-full">
+                <Image
+                    src={getFullPath(video.image) || ''}
+                    alt={video.title}
+                    fill
+                    className="w-full rounded-lg shadow-md object-cover"
+                    loading="lazy"
+                />
+            </div>
+
+            <div className="h-[20px] w-full text-center text-sm font-semibold mt-2 truncate overflow-hidden text-ellipsis whitespace-nowrap">
+                {video.title}
+            </div>
         </Link>
     );
 }
@@ -86,7 +91,7 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
                                     transition: 'opacity 300ms ease',
                                     pointerEvents: 'none',
                                 }}
-                                url={getFullPath(video.path)}
+                                url={getFullPath(video?.path || '')}
                                 playing={isHovered}
                                 muted
                                 loop

@@ -5,7 +5,7 @@ export type VideoResponse = {
     id: number;
     title: string;
     image: string;
-    path: string;
+    path?: string;
     views: number;
     createdAt: string;
     author: string;
