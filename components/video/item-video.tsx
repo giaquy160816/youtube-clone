@@ -1,8 +1,11 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { VideoResponse } from '@/types/video';
 import { PATH } from '@/lib/constants/paths';
 import getFullPath from '@/lib/utils/get-full-path';
+import { useEffect, useState } from 'react';
+import ReactPlayer from 'react-player/lazy';
 
 export function RelatedVideoItem({ video }: { video: VideoResponse }) {
     return (
@@ -25,35 +28,85 @@ export function RelatedVideoItem({ video }: { video: VideoResponse }) {
 
 export function RelatedVideoItemOnPlayer({ video }: { video: VideoResponse }) {
     console.log('video', video);
-    
+
     return (
         <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="cursor-pointer transform hover:scale-105 transition">
-                <Image
-                    src={getFullPath(video.image) || ''}
-                    alt={video.title}
-                    width={150}
-                    height={100}
-                    className="w-full rounded-lg shadow-md"
-                    loading="lazy"
-                />
-                <p className="mt-2 text-center text-sm">{video.title}</p>
+            <Image
+                src={getFullPath(video.image) || ''}
+                alt={video.title}
+                width={150}
+                height={100}
+                className="w-full rounded-lg shadow-md"
+                loading="lazy"
+            />
+            <p className="mt-2 text-center text-sm">{video.title}</p>
         </Link>
     );
 }
 
 export default function VideoCard({ video }: { video: VideoResponse }) {
+    const [isHovered, setIsHovered] = useState(false);
+    const [isPlayerReady, setIsPlayerReady] = useState(false);
+    const [showPlayer, setShowPlayer] = useState(false);
+    useEffect(() => {
+        import('react-player/lazy');
+    }, []);
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+        setShowPlayer(true); // bắt đầu load player
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+        setIsPlayerReady(false); // reset trạng thái buffer
+        setTimeout(() => setShowPlayer(false), 200); // delay một chút để transition đẹp
+    };
+
     return (
         <div className="bg-card">
-            <figure className="relative w-full rounded-xl overflow-hidden mb-2 relative aspect-[16/9]">
+            <figure className="relative w-full rounded-xl overflow-hidden mb-2 aspect-[16/9]"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
                 <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="w-full h-full">
                     <Image
                         src={getFullPath(video.image) || ''}
                         alt={video.title}
                         width={550}
                         height={309}
-                        className="object-cover w-full h-full"
+                        className={`object-cover w-full h-full absolute inset-0 transition-opacity duration-300 ${isHovered && isPlayerReady ? 'opacity-0' : 'opacity-100'}`}
                         loading="lazy"
                     />
+                    {showPlayer && (
+                        <div className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${isHovered && isPlayerReady ? 'opacity-100' : 'opacity-0'
+                            }`}>
+                            <ReactPlayer
+                                style={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    opacity: isHovered && isPlayerReady ? 1 : 0,
+                                    transition: 'opacity 300ms ease',
+                                    pointerEvents: 'none',
+                                }}
+                                url={getFullPath(video.path)}
+                                playing={isHovered}
+                                muted
+                                loop
+                                width="100%"
+                                height="100%"
+                                playsinline
+                                onReady={() => setIsPlayerReady(true)}
+                                config={{
+                                    file: {
+                                        attributes: {
+                                            controls: false,
+                                            preload: 'auto',
+                                        },
+                                    },
+                                }}
+                            />
+                        </div>
+                    )}
                 </Link>
             </figure>
             <div className="flex items-start gap-3">

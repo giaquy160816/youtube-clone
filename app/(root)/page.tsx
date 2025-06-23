@@ -47,6 +47,7 @@ export default function HomePage() {
                     id: video.id,
                     title: video.title,
                     image: video.image,
+                    path: video.path,
                     author: video.author,
                     views: video.views,
                     createdAt: video.createdAt,
