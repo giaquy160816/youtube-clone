@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { VideoResponse } from '@/types/video';
 import { PATH } from '@/lib/constants/paths';
 import getFullPath from '@/lib/utils/get-full-path';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
 
 export function RelatedVideoItem({ video }: { video: VideoResponse }) {
@@ -48,9 +48,7 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
     const [isHovered, setIsHovered] = useState(false);
     const [isPlayerReady, setIsPlayerReady] = useState(false);
     const [showPlayer, setShowPlayer] = useState(false);
-    useEffect(() => {
-        import('react-player/lazy');
-    }, []);
+    
     const handleMouseEnter = () => {
         setIsHovered(true);
         setShowPlayer(true); // bắt đầu load player
