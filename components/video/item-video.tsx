@@ -10,7 +10,7 @@ import ReactPlayer from 'react-player/lazy';
 export function RelatedVideoItem({ video }: { video: VideoResponse }) {
     return (
         <Link href={PATH.VIDEO_DETAIL(video.id) || ''} className="flex gap-2 items-center mb-3 hover:bg-accent rounded p-1 transition">
-            <div className="relative w-[80px] h-[45px] flex-shrink-0 rounded overflow-hidden relative aspect-[16/9]">
+            <div className="relative w-[80px] h-[45px] flex-shrink-0 rounded overflow-hidden aspect-[16/9]">
                 <Image
                     src={getFullPath(video.image) || ''}
                     alt={video.title}
