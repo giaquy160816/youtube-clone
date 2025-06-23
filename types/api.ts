@@ -1,5 +1,7 @@
 // types/api.ts
 
+import { videoSmall } from "./video";
+
 export type ApiResponse<T> = {
     data: T;
     message?: string;
@@ -28,6 +30,11 @@ export type responseSuccess = {
     message: string;
 }
 
+export type responseCallApi = {
+    statusCode: number;
+    message: string;
+}
+
 export type CommentParams = {
     content: string;
     videoId: string;
@@ -53,3 +60,33 @@ export type CommentResponse = {
     isDisliked?: boolean;
     replies?: CommentResponse[];
 };
+
+export type Playlist = {
+    id: string;
+    name: string;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+    videos?: videoSmall[];
+};
+
+export type PlaylistVideo = {
+    id: string;
+    playlistId: string;
+    createdAt: string;
+    updatedAt: string;
+    video: videoSmall;
+};
+
+export type CreatePlaylistRequest = {
+    name: string;
+};
+
+export type AddVideoToPlaylistRequest = {
+    playlistId: number;
+    videoId: number;
+};
+
+export type PlaylistDetailResponse = ApiResponse<Playlist>;
+export type PlaylistListResponse = ApiResponse<Playlist[]>;
+export type PlaylistVideoListResponse = ApiResponse<PlaylistVideo[]>;

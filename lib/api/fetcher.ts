@@ -55,20 +55,19 @@ export async function api<TResponse = unknown, TRequest = unknown>(
         });
 
         if (res.status === 204) return {} as TResponse;
-
+        
         const contentType = res.headers.get('content-type');
         const isJson = contentType?.includes('application/json');
 
         const data = isJson ? await res.json() : null;
 
         if (!res.ok) {
-            return { error: data?.message || res.statusText || 'Request failed' };
+            throw new Error(data?.message || res.statusText || 'Request failed');
         }
 
         return data as TResponse;
     } catch (error) {
-        console.error('API Fetch Error:', error);
-        return { error: (error as Error).message || 'Unexpected error occurred' };
+        throw new Error((error as Error).message || 'Unexpected error occurred');
     }
 }
 

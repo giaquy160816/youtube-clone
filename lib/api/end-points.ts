@@ -36,6 +36,17 @@ export const API_ENDPOINTS = {
             listWatched: `/backend/watched/list`,
             checkWatched: (id: string) => `/backend/watched/${id}`,
             deleteWatched: (id: string) => `/backend/watched/${id}`,
+        },
+        playlist: {
+            list: '/backend/playlists',
+            create: '/backend/playlists',
+            detail: (id: string) => `/backend/playlists/${id}`,
+            update: (id: string) => `/backend/playlists/${id}`,
+            delete: (id: string) => `/backend/playlists/${id}`,
+        },
+        playlistVideo: {
+            add: '/backend/playlist-video',
+            delete: (id: string) => `/backend/playlist-video/${id}`,
         }
     },
     comment: {
@@ -45,5 +56,5 @@ export const API_ENDPOINTS = {
         delete: (id: string) => `/backend/comment/${id}`,
         like: (id: string) => `/backend/comment/${id}/like`,
         dislike: (id: string) => `/backend/comment/${id}/dislike`,
-    },
+    }
 } as const;

@@ -17,10 +17,12 @@ export class SecurityUtils {
                 .replace(/^\/user\//, '/usr/')
                 .replace(/^\/common\//, '/c/')
                 .replace(/^\/comment$/, '/cmt')
-                .replace(/^\/comment\//, '/cmt/');
+                .replace(/^\/comment\//, '/cmt/')
+                .replace(/^\/playlists/, '/b/pl')
+                .replace(/^\/playlist-video/, '/b/plv');
 
             const encrypted = queryString ? `${encryptedPath}?${queryString}` : encryptedPath;
-            console.log('🔐 Encrypting endpoint:', endpoint, '→', encrypted);
+            // console.log('🔐 Encrypting endpoint:', endpoint, '→', encrypted);
             return encrypted;
         } catch (error) {
             console.warn('Encryption failed, using original endpoint:', error);
@@ -44,11 +46,13 @@ export class SecurityUtils {
                 .replace(/^\/usr\//, '/user/')
                 .replace(/^\/c\//, '/common/')
                 .replace(/^\/cmt$/, '/comment')
-                .replace(/^\/cmt\//, '/comment/');
+                .replace(/^\/cmt\//, '/comment/')
+                .replace(/^\/b\/pl/, '/playlists')
+                .replace(/^\/b\/plv/, '/playlist-video');
 
             const decrypted = queryString ? `${decryptedPath}?${queryString}` : decryptedPath;
 
-            console.log('🔓 Decrypting endpoint:', `(${encryptedEndpoint})`, '→', decrypted);
+            // console.log('🔓 Decrypting endpoint:', `(${encryptedEndpoint})`, '→', decrypted);
             return decrypted;
         } catch (error) {
             console.warn('Decryption failed, using encrypted endpoint:', error);

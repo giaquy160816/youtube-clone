@@ -20,3 +20,9 @@ export type VideoDetail = VideoResponse & {
     path: string;
     isActive: boolean;
 }; 
+
+export type videoSmall = {
+    id: number;
+    title: string;
+    image: string;
+}
