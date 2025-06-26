@@ -27,8 +27,6 @@ export function RelatedVideoItem({ video }: { video: VideoResponse }) {
 }
 
 export function RelatedVideoItemOnPlayer({ video }: { video: VideoResponse }) {
-    console.log('video', video);
-
     return (
         <Link href={PATH.VIDEO_DETAIL(video.id) || ''} 
         className="cursor-pointer transform hover:scale-105 transition w-full h-full object-cover rounded flex flex-col flex-1">

@@ -50,6 +50,7 @@ export default function HomePage() {
                     path: video.path,
                     author: video.author,
                     views: video.views,
+                    like: video.like,
                     createdAt: video.createdAt,
                     avatar: video.avatar,
                 }));

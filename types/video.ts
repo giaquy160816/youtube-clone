@@ -7,6 +7,7 @@ export type VideoResponse = {
     image: string;
     path?: string;
     views: number;
+    like: number;
     createdAt: string;
     author: string;
     avatar: string;
@@ -16,6 +17,7 @@ export type VideoResponse = {
 
 export type VideoDetail = VideoResponse & {
     views: number;
+    like: number;
     description: string;
     path: string;
     isActive: boolean;

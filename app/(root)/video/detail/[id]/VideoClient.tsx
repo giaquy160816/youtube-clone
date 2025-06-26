@@ -5,7 +5,7 @@ import Image from 'next/image';
 import type { VideoDetail, VideoResponse } from '@/types/video';
 import getFullPath from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
-import { ThumbsUp, Share2, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
@@ -24,6 +24,7 @@ import {
     DialogClose,
 } from '@/components/ui/dialog';
 import { usePlaylist } from '@/lib/hooks/usePlaylist';
+import GroupButton from './GroupButton';
 
 export default function VideoClient({
     id,
@@ -59,6 +60,16 @@ export default function VideoClient({
         setShowOverlay(false);
         setIsPlaying(true);
     };
+
+    const downloadFile = () => {
+        const videoPath = video ? (getFullPath(video.path).includes('_hls/playlist.m3u8')? getFullPath(video.path).replace('_hls/playlist.m3u8','.mp4') :getFullPath(video.path).replace('.m3u8','.mp4')): '';
+        const fileName = videoPath ?videoPath.split('/').pop() || 'downloaded-file.mp4': 'downloaded-file.mp4';
+        const link = document.createElement('a');
+        link.href = videoPath ? getFullPath(videoPath) : '';
+        link.download = fileName;
+        link.click();
+    };
+    
     useEffect(() => {
         if (rawAuth) setIsAuthenticated(true);
     }, [rawAuth]);
@@ -100,7 +111,6 @@ export default function VideoClient({
     const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const [addToId, setAddToId] = useState<string | null>(null);
-    const [editPlaylistId, setEditPlaylistId] = useState<string | null>(null);
     const {
         playlists,
         loading: playlistLoading,
@@ -148,8 +158,8 @@ export default function VideoClient({
                         onPlay={handlePlay}
                     />
                     {showOverlay && relatedVideos && (
-                        <div className="absolute inset-0 bg-[#000000]/80 flex flex-col h-full w-full text-white">
-                            <div className="flex-1 w-full flex items-center justify-center p-4">
+                        <div className="absolute inset-0 bg-[#000000]/90 flex flex-col h-full w-full text-white justify-center ">
+                            <div className="flex-1 w-full flex items-center justify-center p-4 hidden md:block">
                                 <div className="grid grid-cols-2 flex-1 grid-rows-2 gap-4 w-full h-full max-w-2xl">
                                     {relatedVideos.slice(0, 4).map((video) => (
                                         <div key={video.id} className="flex flex-col h-full min-h-0 bg-transparent">
@@ -158,7 +168,7 @@ export default function VideoClient({
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex flex-row gap-4 w-full items-center justify-center my-2 h-[30px] min-h-[30px] max-h-[30px]">
+                            <div className="flex md:flex-row flex-col gap-4 w-full items-center justify-center my-2 h-[30px] min-h-[30px] max-h-[30px]">
                                 <Button variant="secondary" onClick={() => router.back()} className="h-[30px] px-4">Quay về</Button>
                                 <Button variant="default" onClick={() => {
                                     setShowOverlay(false);
@@ -197,52 +207,13 @@ export default function VideoClient({
                                 {video.views?.toLocaleString()} lượt xem • {video.createdAt}
                             </div>
 
-                            <div className="mt-4 flex items-center gap-4 mb-4">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => {
-                                        if (!isAuthenticated) {
-                                            toast.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
-                                            return;
-                                        }
-                                        handleLike();
-                                    }}
-                                    className={`flex items-center gap-1 border-primary border-1 border-solid hover:bg-primary hover:text-white ${isLiked ? 'bg-primary text-white' : ''}`}
-                                >
-                                    <ThumbsUp className="w-4 h-4" />
-                                    <span>{isLiked ? 'Đã thích' : 'Thích'}</span>
-                                </Button>
-
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => {
-                                        const link = window.location.href;
-                                        navigator.clipboard.writeText(link);
-                                        toast.success('Đã sao chép liên kết!');
-                                    }}
-                                    className="flex items-center gap-1 border-[blue] border-1 border-solid hover:bg-[blue]"
-                                >
-                                    <Share2 className="w-4 h-4" />
-                                    <span>Chia sẻ</span>
-                                </Button>
-
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => {
-                                        if (!isAuthenticated) {
-                                            toast.warning('Vui lòng đăng nhập để sử dụng playlist!');
-                                            return;
-                                        }
-                                        setPlaylistModalOpen(true);
-                                    }}
-                                    className="flex items-center gap-1 border-[green] border-1 border-solid hover:bg-[green]"
-                                >
-                                    <span>Thêm vào playlist</span>
-                                </Button>
-                            </div>
+                            <GroupButton 
+                                video={video}
+                                isLiked={isLiked}
+                                handleLike={handleLike}
+                                downloadFile={downloadFile}
+                                setPlaylistModalOpen={setPlaylistModalOpen}
+                            />
                         </div>
                     </div>
                     {/* Description Block */}

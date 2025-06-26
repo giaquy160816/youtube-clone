@@ -46,7 +46,7 @@ export const API_ENDPOINTS = {
         },
         playlistVideo: {
             add: '/backend/playlist-video',
-            delete: (id: string) => `/backend/playlist-video/${id}`,
+            delete: (id: string, videoId: string) => `/backend/playlist-video/${id}/${videoId}`,
         }
     },
     comment: {

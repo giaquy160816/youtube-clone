@@ -50,6 +50,7 @@ export const useVideoSearch = ({
                 image: video.image,
                 author: video.author,
                 views: video.views,
+                like: video.like,
                 createdAt: video.createdAt,
                 avatar: video.avatar,
             }));

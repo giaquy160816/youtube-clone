@@ -49,7 +49,28 @@ export function usePlaylist() {
         setLoading(true);
         setError(null);
         try {
-            await api(API_ENDPOINTS.user.playlistVideo.add, { method: 'POST' }, { playlistId: Number(playlistId), videoId: Number(videoId) } as AddVideoToPlaylistRequest);
+            await api(
+                API_ENDPOINTS.user.playlistVideo.add, 
+                { method: 'POST' }, 
+                { playlistId: Number(playlistId), videoId: Number(videoId) } as AddVideoToPlaylistRequest
+            );
+            return true;
+        } catch (err: any) {
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+    
+    // Xoa video khỏi playlist
+    const deleteVideoFromPlaylist = useCallback(async (playlistId: string, videoId: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            await api(
+                API_ENDPOINTS.user.playlistVideo.delete(playlistId, videoId), 
+                { method: 'DELETE' }
+            );
             return true;
         } catch (err: any) {
             return false;
@@ -106,5 +127,6 @@ export function usePlaylist() {
         updatePlaylist,
         deletePlaylist,
         getPlaylistDetail,
+        deleteVideoFromPlaylist,
     };
 } 
