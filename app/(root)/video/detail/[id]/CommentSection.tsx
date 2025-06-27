@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { useUser } from '@/lib/context/UserContext';
+import getFullPath from '@/lib/utils/get-full-path';
 
 type Comment = {
     id: string;
@@ -124,7 +125,7 @@ export default function CommentSection({ videoId }: { videoId: string }) {
                 {comments.map((c) => (
                     <div key={c.id} className="flex items-start gap-3">
                         <Avatar className="h-9 w-9 shrink-0">
-                            <AvatarImage src={c.user_avatar || ''} />
+                            <AvatarImage src={getFullPath(c.user_avatar || '')} />
                             <AvatarFallback>{c.user_name?.[0] ?? '?'}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">

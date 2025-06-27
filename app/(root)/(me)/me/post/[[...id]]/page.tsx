@@ -60,7 +60,14 @@ const PostVideoPage = () => {
         setLoading(true);
         (async () => {
             try {
-                const res = await api(API_ENDPOINTS.user.video.detail(id), { method: 'GET' }) as any;
+                const res = await api(API_ENDPOINTS.user.video.detail(id), { method: 'GET' }) as {
+                    title?: string;
+                    description?: string;
+                    image?: string;
+                    path?: string;
+                    isActive?: boolean;
+                    tags?: string[];
+                };
                 setForm({
                     title: res.title || '',
                     description: res.description || '',

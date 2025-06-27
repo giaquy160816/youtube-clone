@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Pencil, Eye, Trash2, Loader2 } from "lucide-react";
+import { Eye, Trash2, Pencil } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 import { PATH } from "@/lib/constants/paths";
@@ -14,7 +14,7 @@ import { api, apiGet } from "@/lib/api/fetcher";
 import { toast } from "sonner";
 import getFullPath from "@/lib/utils/get-full-path";
 import { responseSuccess } from "@/types/api";
-import { SkeletonTable, Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 type VideoItem = {
     id: number;

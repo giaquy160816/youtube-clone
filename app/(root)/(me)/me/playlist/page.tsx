@@ -21,14 +21,11 @@ const PlaylistItem = ({
 }) => {
     const [editId, setEditId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
-    const [deleteId, setDeleteId] = useState<string | null>(null);
-    const [playlistName, setPlaylistName] = useState(playlist.name);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleEdit = () => {
         setEditId(playlist.id);
         setEditName(playlist.name);
-        
     }
 
     const handleSave = async () => {
@@ -36,7 +33,6 @@ const PlaylistItem = ({
             const ok = await updatePlaylist(editId, editName.trim());
             if (ok) {
                 setEditId(null);
-                setPlaylistName(editName);
                 fetchPlaylists();
             }
         }
@@ -123,10 +119,17 @@ const PlaylistItem = ({
 }
 
 export default function MePlaylistPage() {
-    const { playlists, loading, error, fetchPlaylists, updatePlaylist, deletePlaylist } = usePlaylist();
+    const { 
+        playlists, 
+        fetchPlaylists, 
+        updatePlaylist, 
+        deletePlaylist
+    } = usePlaylist();
+    
     useEffect(() => {
         fetchPlaylists();
     }, []);
+    
     return (
         <div className="p-6 space-y-6">
             <div className="flex items-center justify-between">

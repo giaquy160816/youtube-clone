@@ -29,6 +29,13 @@ export function useLoginHandler() {
         Cookies.set('access_token', accessToken, { expires: expiredAt / 86400 }); // Convert seconds to days
         Cookies.set('user_info', JSON.stringify(user), { expires: expiredAt / 86400 });
 
-        router.push(PATH.HOME);
+        // Kiểm tra xem có return URL không
+        const returnUrl = sessionStorage.getItem('return_url');
+        if (returnUrl) {
+            sessionStorage.removeItem('return_url');
+            router.push(returnUrl);
+        } else {
+            router.push(PATH.HOME);
+        }
     };
 }

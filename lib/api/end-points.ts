@@ -29,9 +29,12 @@ export const API_ENDPOINTS = {
             detail: (id: string) => `/backend/video/${id}`,
             edit: (id: string) => `/backend/video/${id}`,
             delete: (id: string) => `/backend/video/${id}`,
+
             like: `/backend/like`,
+            getLiked: `/backend/like/liked-videos`,
             dislike: (id: string) => `/backend/like/${id}`,
             checkLike: (id: string) => `/backend/like/check/${id}`,
+
             watched: `/backend/watched`,
             listWatched: `/backend/watched/list`,
             checkWatched: (id: string) => `/backend/watched/${id}`,
@@ -46,6 +49,7 @@ export const API_ENDPOINTS = {
         },
         playlistVideo: {
             add: '/backend/playlist-video',
+            playlist: (videoId: string) => `/backend/playlist-video/video/${videoId}`,
             delete: (id: string, videoId: string) => `/backend/playlist-video/${id}/${videoId}`,
         }
     },

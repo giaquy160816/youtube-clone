@@ -21,8 +21,9 @@ export function usePlaylist() {
         try {
             const res = await api(API_ENDPOINTS.user.playlist.list, { method: 'GET' }) as PlaylistListResponse;
             setPlaylists(res.data || []);
-        } catch (err: any) {
-            setError(err?.message || 'Lỗi khi lấy danh sách playlist');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi khi lấy danh sách playlist';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -36,8 +37,9 @@ export function usePlaylist() {
             await api(API_ENDPOINTS.user.playlist.create, { method: 'POST' }, { name } as CreatePlaylistRequest);
             await fetchPlaylists();
             return true;
-        } catch (err: any) {
-            setError(err?.message || 'Lỗi khi tạo playlist');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi khi tạo playlist';
+            setError(errorMessage);
             return false;
         } finally {
             setLoading(false);
@@ -46,7 +48,7 @@ export function usePlaylist() {
 
     // Thêm video vào playlist
     const addVideoToPlaylist = useCallback(async (playlistId: string, videoId: string) => {
-        setLoading(true);
+        // setLoading(true);
         setError(null);
         try {
             await api(
@@ -55,16 +57,13 @@ export function usePlaylist() {
                 { playlistId: Number(playlistId), videoId: Number(videoId) } as AddVideoToPlaylistRequest
             );
             return true;
-        } catch (err: any) {
+        } catch {
             return false;
-        } finally {
-            setLoading(false);
         }
     }, []);
     
     // Xoa video khỏi playlist
     const deleteVideoFromPlaylist = useCallback(async (playlistId: string, videoId: string) => {
-        setLoading(true);
         setError(null);
         try {
             await api(
@@ -72,10 +71,8 @@ export function usePlaylist() {
                 { method: 'DELETE' }
             );
             return true;
-        } catch (err: any) {
+        } catch {
             return false;
-        } finally {
-            setLoading(false);
         }
     }, []);
 
@@ -87,8 +84,9 @@ export function usePlaylist() {
             await api(API_ENDPOINTS.user.playlist.update(id), { method: 'PATCH' }, { name });
             await fetchPlaylists();
             return true;
-        } catch (err: any) {
-            setError(err?.message || 'Lỗi khi sửa playlist');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi khi sửa playlist';
+            setError(errorMessage);
             return false;
         } finally {
             setLoading(false);
@@ -103,8 +101,9 @@ export function usePlaylist() {
             await api(API_ENDPOINTS.user.playlist.delete(id), { method: 'DELETE' });
             await fetchPlaylists();
             return true;
-        } catch (err: any) {
-            setError(err?.message || 'Lỗi khi xoá playlist');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi khi xoá playlist';
+            setError(errorMessage);
             return false;
         } finally {
             setLoading(false);

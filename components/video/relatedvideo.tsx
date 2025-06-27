@@ -1,6 +1,5 @@
 'use client';
 import type { videoSmall } from '@/types/video';
-import { PATH } from "@/lib/constants/paths";
 import Link from "next/link";
 import getFullPath from "@/lib/utils/get-full-path";
 import Image from "next/image";
@@ -27,8 +26,6 @@ export function RelatedVideoListPlaylist({
     onMoveVideo, 
     currentVideoId 
 }: Props & { currentVideoId?: string | null }) {
-    console.log('currentVideoId', currentVideoId);
-
     return (
         <div className="flex flex-col">
             {videos.map((video, index) => {

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import type { VideoDetail, VideoResponse } from '@/types/video';
 import getFullPath from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
-import { Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
@@ -13,18 +12,8 @@ import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { RelatedVideoItemOnPlayer } from '@/components/video/item-video';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogClose,
-} from '@/components/ui/dialog';
-import { usePlaylist } from '@/lib/hooks/usePlaylist';
 import GroupButton from './GroupButton';
+import PlaylistDialog from './PlaylistDialog';
 
 export default function VideoClient({
     id,
@@ -35,7 +24,6 @@ export default function VideoClient({
     video: VideoDetail | null;
     relatedVideos: VideoResponse[] | null;
 }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const rawAuth = useIsAuthenticated();
     const [isLiked, setIsLiked] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
@@ -51,10 +39,14 @@ export default function VideoClient({
     const displayText = expanded || !isLong
         ? description
         : shortText;
+    
+    const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
+
     const handleVideoEnd = () => {
         setShowOverlay(true);
         setIsPlaying(false);
     };
+    
     const handlePlay = () => {
         // If user presses play again after video ends, hide overlay
         setShowOverlay(false);
@@ -70,10 +62,6 @@ export default function VideoClient({
         link.click();
     };
     
-    useEffect(() => {
-        if (rawAuth) setIsAuthenticated(true);
-    }, [rawAuth]);
-
     useEffect(() => {
         if (!video || !rawAuth) return;
 
@@ -108,40 +96,14 @@ export default function VideoClient({
         checkLike();
     }, [id, video, rawAuth]);
 
-    const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
-    const [newPlaylistName, setNewPlaylistName] = useState('');
-    const [addToId, setAddToId] = useState<string | null>(null);
-    const {
-        playlists,
-        loading: playlistLoading,
-        error: playlistError,
-        fetchPlaylists,
-        createPlaylist,
-        addVideoToPlaylist,
-        setError: setPlaylistError,
-        updatePlaylist,
-        deletePlaylist,
-    } = usePlaylist();
-
-    const [editId, setEditId] = useState<string | null>(null);
-    const [editName, setEditName] = useState('');
-    const [deleteId, setDeleteId] = useState<string | null>(null);
-
-    // Fetch playlists when modal opens
-    useEffect(() => {
-        if (playlistModalOpen) {
-            fetchPlaylists();
-        }
-    }, [playlistModalOpen]);
-
     if (!video) return <div className="p-4 text-red-500">Không tìm thấy video</div>;
+    
     return (
         <div className="w-full">
             <div className="w-full max-w-4xl mx-auto">
                 <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
                     <ReactPlayer
                         ref={playerRef}
-                        // key={retryKey}
                         url={getFullPath(video.path)}
                         width="100%"
                         height="100%"
@@ -149,11 +111,6 @@ export default function VideoClient({
                         controls
                         muted
                         className="absolute top-0 left-0"
-                        // onError={(e) => {
-                        //     console.warn('Retrying video load...');
-                        //     console.error('Video load error:', e);
-                        //     setTimeout(() => setRetryKey((k) => k + 1), 500);
-                        // }}
                         onEnded={handleVideoEnd}
                         onPlay={handlePlay}
                     />
@@ -257,156 +214,13 @@ export default function VideoClient({
                     )}
                 </div>
             </div>
-            {/* Dialog/modal playlist */}
-            <Dialog open={playlistModalOpen} onOpenChange={setPlaylistModalOpen}>
-                <DialogContent className="sm:max-w-[420px]">
-                    <DialogHeader>
-                        <DialogTitle>Playlist của bạn</DialogTitle>
-                        <DialogDescription>
-                            Tạo mới hoặc thêm video vào playlist đã có.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {/* Form tạo playlist mới */}
-                    <form
-                        onSubmit={async (e) => {
-                            e.preventDefault();
-                            if (!newPlaylistName.trim()) return;
-                            const ok = await createPlaylist(newPlaylistName.trim());
-                            if (ok) {
-                                toast.success('Tạo playlist thành công!');
-                                setNewPlaylistName('');
-                                await fetchPlaylists();
-                            } else {
-                                toast.error(playlistError || 'Tạo playlist thất bại!');
-                            }
-                        }}
-                        className="flex gap-2 mb-4"
-                    >
-                        <Input
-                            value={newPlaylistName}
-                            onChange={e => {
-                                setNewPlaylistName(e.target.value);
-                                setPlaylistError(null);
-                            }}
-                            placeholder="Tên playlist mới"
-                            disabled={playlistLoading}
-                        />
-                        <Button type="submit" disabled={playlistLoading || !newPlaylistName.trim()}>
-                            Tạo mới
-                        </Button>
-                    </form>
-                    {/* Danh sách playlist đã có */}
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                        {playlistLoading ? (
-                            <div>Đang tải...</div>
-                        ) : playlists.length === 0 ? (
-                            <div>Bạn chưa có playlist nào.</div>
-                        ) : (
-                            playlists.map((pl) => (
-                                <div key={pl.id} className="flex items-center justify-between border rounded px-3 py-2 gap-2">
-                                    {editId === pl.id ? (
-                                        <>
-                                            <Input
-                                                value={editName}
-                                                onChange={e => setEditName(e.target.value)}
-                                                className="max-w-[120px]"
-                                                disabled={playlistLoading}
-                                            />
-                                            <div className="flex items-center gap-2">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    disabled={playlistLoading || !editName.trim()}
-                                                    onClick={async () => {
-                                                        const ok = await updatePlaylist(pl.id, editName.trim());
-                                                        if (ok) {
-                                                            toast.success('Đã sửa tên playlist!');
-                                                            setEditId(null);
-                                                            setEditName('');
-                                                        } else {
-                                                            toast.error(playlistError || 'Sửa tên thất bại!');
-                                                        }
-                                                    }}
-                                                >
-                                                    Lưu
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    onClick={() => {
-                                                        setEditId(null);
-                                                        setEditName('');
-                                                    }}
-                                                >
-                                                    Huỷ
-                                                </Button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="truncate max-w-[100px]">{pl.name}</span>
-                                            <div className="flex items-center gap-2">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    disabled={playlistLoading || addToId === pl.id}
-                                                    onClick={async () => {
-                                                        setAddToId(pl.id);
-                                                        const ok = await addVideoToPlaylist(pl.id, id);
-                                                        setAddToId(null);
-                                                        if (ok) {
-                                                            toast.success('Đã thêm video vào playlist!');
-                                                        } else {
-                                                            toast.error(playlistError || 'Thêm video thất bại!');
-                                                        }
-                                                    }}
-                                                >
-                                                    {addToId === pl.id ? 'Đang thêm...' : '+'}
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        setEditId(pl.id);
-                                                        setEditName(pl.name);
-                                                    }}
-                                                >
-                                                    <Edit className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="destructive"
-                                                    onClick={async () => {
-                                                        if (window.confirm('Bạn chắc chắn muốn xoá playlist này?')) {
-                                                            setDeleteId(pl.id);
-                                                            const ok = await deletePlaylist(pl.id);
-                                                            setDeleteId(null);
-                                                            if (ok) {
-                                                                toast.success('Đã xoá playlist!');
-                                                            } else {
-                                                                toast.error(playlistError || 'Xoá playlist thất bại!');
-                                                            }
-                                                        }
-                                                    }}
-                                                    disabled={playlistLoading || deleteId === pl.id}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            ))
-                        )}
-                    </div>
-                    {playlistError && <div className="text-red-500 text-sm mt-2">{playlistError}</div>}
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant="outline">Đóng</Button>
-                        </DialogClose>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            
+            {/* Playlist Dialog */}
+            <PlaylistDialog 
+                open={playlistModalOpen}
+                onOpenChange={setPlaylistModalOpen}
+                videoId={id}
+            />
         </div>
     );
 

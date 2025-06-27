@@ -93,7 +93,7 @@ export const useComment = () => {
 
     const likeComment = useCallback(async (id: string): Promise<boolean> => {
         try {
-            const res = await apiPost<ApiResponse<{ message: string }>, {}>(API_ENDPOINTS.comment.like(id), {});
+            const res = await apiPost<ApiResponse<{ message: string }>, Record<string, never>>(API_ENDPOINTS.comment.like(id), {});
             
             if ('error' in res) {
                 notify.error(res.error);
@@ -110,7 +110,7 @@ export const useComment = () => {
 
     const dislikeComment = useCallback(async (id: string): Promise<boolean> => {
         try {
-            const res = await apiPost<ApiResponse<{ message: string }>, {}>(API_ENDPOINTS.comment.dislike(id), {});
+            const res = await apiPost<ApiResponse<{ message: string }>, Record<string, never>>(API_ENDPOINTS.comment.dislike(id), {});
             
             if ('error' in res) {
                 notify.error(res.error);

@@ -1,5 +1,5 @@
 'use client';
-import { useParams, useRouter, usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { usePlaylist } from "@/lib/hooks/usePlaylist";
 import { useEffect, useState } from "react";
 import { Playlist } from "@/types/api";
@@ -11,7 +11,6 @@ import { RelatedVideoListPlaylist } from "@/components/video/relatedvideo";
 
 export default function MePlaylistIdPage() {
     const { id } = useParams();
-    const router = useRouter();
     const pathname = usePathname();
     const { getPlaylistDetail, deleteVideoFromPlaylist } = usePlaylist();
     const [video, setVideo] = useState<VideoDetail | null>(null);
@@ -82,10 +81,34 @@ export default function MePlaylistIdPage() {
         }
     };
     
+    // Lấy thông tin playlist
     useEffect(() => {
-        getPlaylistDetail(id as string).then((res) => {
-            setPlaylist(res);
-        });
+        if (!id) return;
+        
+        const fetchPlaylist = async () => {
+            try {
+                const playlistData = await getPlaylistDetail(id as string);
+                if (playlistData) {
+                    setPlaylist(playlistData);
+                    
+                    // Lấy video đầu tiên nếu có
+                    if (playlistData.videos && playlistData.videos.length > 0) {
+                        const firstVideo = playlistData.videos[0];
+                        setCurrentVideoId(firstVideo.id.toString());
+                        
+                        // Lấy thông tin chi tiết video đầu tiên
+                        const videoDetail = await getVideoDetail(firstVideo.id.toString());
+                        if (videoDetail && !('error' in videoDetail)) {
+                            setVideo(videoDetail);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching playlist:', error);
+            }
+        };
+        
+        fetchPlaylist();
     }, [id]);
     
     // Lắng nghe hash trên URL để lấy videoId
@@ -123,7 +146,7 @@ export default function MePlaylistIdPage() {
             window.removeEventListener("hashchange", handleHashChange);
             window.removeEventListener("popstate", handleHashChange);
         };
-    }, [playlist]);
+    }, []);
 
     // Kiểm tra thay đổi hash mỗi 100ms để bắt các thay đổi không trigger events
     useEffect(() => {
@@ -148,7 +171,7 @@ export default function MePlaylistIdPage() {
         const interval = setInterval(checkHashChange, 100);
         
         return () => clearInterval(interval);
-    }, [playlist]);
+    }, []);
 
     // Lắng nghe thay đổi URL (bao gồm cả hash) mà không reload trang
     useEffect(() => {
@@ -174,7 +197,7 @@ export default function MePlaylistIdPage() {
             observer.disconnect();
             window.removeEventListener('popstate', handleUrlChange);
         };
-    }, [playlist, pathname]);
+    }, [pathname]);
 
     // Khi playlist hoặc currentVideoId thay đổi, lấy video tương ứng
     useEffect(() => {
@@ -196,7 +219,7 @@ export default function MePlaylistIdPage() {
 
             setRelatedVideos(playlist.videos || []);
         }
-    }, [playlist, currentVideoId]);
+    }, [currentVideoId]);
     console.log('relatedVideos', relatedVideos);
     
     return (

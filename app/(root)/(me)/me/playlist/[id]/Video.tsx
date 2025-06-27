@@ -2,28 +2,9 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
-import type { VideoDetail, VideoResponse, videoSmall } from '@/types/video';
+import type { VideoDetail, videoSmall } from '@/types/video';
 import getFullPath from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
-import { ThumbsUp, Share2, Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
-import { api } from '@/lib/api/fetcher';
-import { API_ENDPOINTS } from '@/lib/api/end-points';
-import { RelatedVideoItemOnPlayer } from '@/components/video/item-video';
-import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogClose,
-} from '@/components/ui/dialog';
-import { usePlaylist } from '@/lib/hooks/usePlaylist';
 
 export default function VideoClient({
     id,
@@ -38,7 +19,6 @@ export default function VideoClient({
     currentVideoId?: string | null;
     onVideoChange?: (videoId: string) => void;
 }) {
-    const rawAuth = useIsAuthenticated();
     const playerRef = useRef<ReactPlayer>(null);
     const [isPlaying, setIsPlaying] = useState(true);
     const description = video ? video.description : null;
@@ -70,17 +50,10 @@ export default function VideoClient({
             }
         }
     };
+    
     const handlePlay = () => {
         setIsPlaying(true);
     };
-
-    const {
-        fetchPlaylists,
-    } = usePlaylist();
-
-    const [editId, setEditId] = useState<string | null>(null);
-    const [editName, setEditName] = useState('');
-    const [deleteId, setDeleteId] = useState<string | null>(null);
 
     // Tự động play video khi chuyển sang video mới
     useEffect(() => {
@@ -88,13 +61,13 @@ export default function VideoClient({
     }, [id]);
 
     if (!video) return <div className="p-4 text-red-500">Không tìm thấy video</div>;
+    
     return (
         <div className="w-full">
             <div className="w-full max-w-4xl mx-auto">
                 <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
                     <ReactPlayer
                         ref={playerRef}
-                        // key={retryKey}
                         url={getFullPath(video.path)}
                         width="100%"
                         height="100%"

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useIsAuthenticated } from "@/lib/hooks/useIsAuthenticated";
+import { useAuthRedirect } from "@/lib/hooks/useAuthRedirect";
 import { ThumbsUp, Share2, BookmarkPlus, Download, Ellipsis } from "lucide-react";
-import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { VideoDetail } from "@/types/video";
 
@@ -22,6 +22,7 @@ export default function GroupButton(
     }
 ) {
     const isAuthenticated = useIsAuthenticated();
+    const { redirectToLogin } = useAuthRedirect();
     
     return (
         <div className="mt-4 flex items-center gap-4 mb-4 ">
@@ -30,7 +31,7 @@ export default function GroupButton(
                 size="sm"
                 onClick={() => {
                     if (!isAuthenticated) {
-                        toast.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
+                        redirectToLogin('Vui lòng đăng nhập để thực hiện chức năng này!');
                         return;
                     }
                     handleLike();
@@ -60,7 +61,7 @@ export default function GroupButton(
                 size="sm"
                 onClick={() => {
                     if (!isAuthenticated) {
-                        toast.warning('Vui lòng đăng nhập để sử dụng playlist!');
+                        redirectToLogin('Vui lòng đăng nhập để sử dụng playlist!');
                         return;
                     }
                     setPlaylistModalOpen(true);
@@ -95,7 +96,7 @@ export default function GroupButton(
                         <DropdownMenuItem
                             onClick={() => {
                                 if (!isAuthenticated) {
-                                    toast.warning('Vui lòng đăng nhập để sử dụng playlist!');
+                                    redirectToLogin('Vui lòng đăng nhập để sử dụng playlist!');
                                     return;
                                 }
                                 setPlaylistModalOpen(true);
