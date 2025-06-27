@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -24,9 +24,12 @@ interface PlaylistDialogProps {
     videoId: string;
 }
 
+type PlaylistVideoResponse = {
+    data: string[];
+};
+
 export default function PlaylistDialog({ open, onOpenChange, videoId }: PlaylistDialogProps) {
     const [newPlaylistName, setNewPlaylistName] = useState('');
-    const [loadingStates, setLoadingStates] = useState<Set<string>>(new Set());
     const [playlistsOfVideo, setPlaylistsOfVideo] = useState<string[]>([]);
 
     const {
@@ -40,16 +43,16 @@ export default function PlaylistDialog({ open, onOpenChange, videoId }: Playlist
         setError: setPlaylistError,
     } = usePlaylist();
 
-    const fetchVideoInPlaylists = async (videoId: string) => {
+    const fetchVideoInPlaylists = useCallback(async (videoId: string) => {
         try {
             const res = await api(
                 API_ENDPOINTS.user.playlistVideo.playlist(videoId), 
-                { method: 'GET' }) as { data: any[] };
+                { method: 'GET' }) as PlaylistVideoResponse;
             setPlaylistsOfVideo(res?.data || []);
         } catch (error) {
             console.warn('Không kiểm tra được video trong playlist:', error);
         }
-    }
+    }, []);
 
     // Fetch playlists and check which playlists contain this video
     useEffect(() => {
@@ -85,7 +88,7 @@ export default function PlaylistDialog({ open, onOpenChange, videoId }: Playlist
         } else {
             setPlaylistsOfVideo(prev => prev.filter(id => id !== playlistId));
         }
-        setLoadingStates(prev => new Set(prev).add(playlistId));
+        
         try {
             let ok: boolean;
             if (checked) {
@@ -107,12 +110,15 @@ export default function PlaylistDialog({ open, onOpenChange, videoId }: Playlist
                     toast.success('Đã xóa video khỏi playlist!');
                 }
             }
-        } finally {
-            setLoadingStates(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(playlistId);
-                return newSet;
-            });
+        } catch (error) {
+            // Rollback nếu có lỗi
+            if (checked) {
+                setPlaylistsOfVideo(prev => prev.filter(id => id !== playlistId));
+            } else {
+                setPlaylistsOfVideo(prev => [...prev, playlistId]);
+            }
+            toast.error('Có lỗi xảy ra!');
+            console.log('error', error);
         }
     };
 
