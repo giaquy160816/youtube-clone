@@ -213,7 +213,11 @@ export default function MePlaylistIdPage() {
             }
             if (videoId) {
                 getVideoDetail(videoId).then((res) => {
-                    setVideo(res);
+                    if (res && !('error' in res)) {
+                        setVideo(res);
+                    } else {
+                        setVideo(null);
+                    }
                 });
             }
 

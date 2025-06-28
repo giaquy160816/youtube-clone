@@ -44,19 +44,22 @@ export default async function Page({ params }: Props) {
     const video: VideoDetail | { error: string } | null = await getVideoDetail(id);
     const isValid = video && !('error' in video);
 
-    // Lấy danh sách video liên quan (tạm thời: lấy 6 video đầu, loại bỏ video hiện tại)
+    // Chỉ lấy danh sách video liên quan khi video hợp lệ
     let relatedVideos: VideoResponse[] = [];
     let relatedVideosSmall: VideoResponse[] = [];
-    try {
-        const tags = video?.tags?.join(',') || '';
-        const urlGetRelatedVideos = API_ENDPOINTS.video.list + '?q=' + encodeURIComponent(tags) + '&page=1&limit=7';
-        const res = await apiGet<{ data: VideoResponse[] } | { error: string }>(urlGetRelatedVideos);
-        if (res && !('error' in res) && Array.isArray(res.data)) {
-            relatedVideos = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 6);
-            relatedVideosSmall = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 4);
+    
+    if (isValid && video) {
+        try {
+            const tags = video.tags?.join(',') || '';
+            const urlGetRelatedVideos = API_ENDPOINTS.video.list + '?q=' + encodeURIComponent(tags) + '&page=1&limit=7';
+            const res = await apiGet<{ data: VideoResponse[] } | { error: string }>(urlGetRelatedVideos);
+            if (res && !('error' in res) && Array.isArray(res.data)) {
+                relatedVideos = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 6);
+                relatedVideosSmall = res.data.filter((v: VideoResponse) => v.id.toString() !== id).slice(0, 4);
+            }
+        } catch (error) {
+            console.error('Error fetching related videos:', error);
         }
-    } catch (error) {
-        console.error('Error fetching related videos:', error);
     }
 
     return (
@@ -65,15 +68,17 @@ export default async function Page({ params }: Props) {
                 <div className="flex-1 min-w-0">
                     <VideoClient id={id} video={isValid ? video : null} relatedVideos={relatedVideosSmall} />
                 </div>
-                <aside className="w-full md:w-[320px] flex-shrink-0">
-                    <div className="font-semibold text-lg mb-3">Video liên quan</div>
-                    <RelatedVideoList videos={relatedVideos} />
-                </aside>
+                {isValid && relatedVideos.length > 0 && (
+                    <aside className="w-full md:w-[320px] flex-shrink-0">
+                        <div className="font-semibold text-lg mb-3">Video liên quan</div>
+                        <RelatedVideoList videos={relatedVideos} />
+                    </aside>
+                )}
             </div>
             {isValid && (
                 <div className="w-full flex flex-col md:flex-row gap-8 max-w-6xl mx-auto mt-10 px-2">
                     <div className="flex-1 min-w-0">
-                        {isValid && <CommentSection videoId={id} />}
+                        <CommentSection videoId={id} />
                     </div>
                     <aside className="w-full md:w-[320px] flex-shrink-0"></aside>
                 </div>
