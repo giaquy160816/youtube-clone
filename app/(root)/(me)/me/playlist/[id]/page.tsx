@@ -1,7 +1,7 @@
 'use client';
 import { useParams, usePathname } from "next/navigation";
 import { usePlaylist } from "@/lib/hooks/usePlaylist";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Playlist } from "@/types/api";
 import { VideoDetail, videoSmall } from "@/types/video";
 import { getVideoDetail } from "@/features/videos/get-video-detail";
@@ -19,10 +19,14 @@ export default function MePlaylistIdPage() {
     const [relatedVideos, setRelatedVideos] = useState<videoSmall[]>([]);
     
     // Hàm xử lý khi chuyển sang video khác
-    const handleVideoChange = (videoId: string) => {
+    const handleVideoChange = useCallback((videoId: string) => {
+        console.log('handleVideoChange called with:', videoId);
         setCurrentVideoId(videoId);
-        window.location.hash = `#${videoId}`;
-    };
+        // Cập nhật hash mà không reload trang
+        if (window.location.hash !== `#${videoId}`) {
+            window.history.pushState(null, '', `#${videoId}`);
+        }
+    }, []);
     
     // Hàm xóa video khỏi playlist
     const handleDeleteVideo = async (videoId: number) => {
@@ -80,6 +84,28 @@ export default function MePlaylistIdPage() {
             console.error('Lỗi khi di chuyển video:', error);
         }
     };
+
+    // Hàm xử lý hash change
+    const handleHashChange = useCallback(() => {
+        const hash = window.location.hash.replace("#", "");
+        console.log('Hash changed to:', hash);
+        
+        if (playlist && hash) {
+            const videoExists = playlist.videos?.some(v => v.id.toString() === hash);
+            if (videoExists) {
+                setCurrentVideoId(hash);
+            } else {
+                // Nếu videoId không tồn tại, set về video đầu tiên
+                const firstVideoId = playlist.videos?.[0]?.id?.toString();
+                if (firstVideoId) {
+                    window.location.hash = `#${firstVideoId}`;
+                    setCurrentVideoId(firstVideoId);
+                }
+            }
+        } else if (hash) {
+            setCurrentVideoId(hash);
+        }
+    }, [playlist]);
     
     // Lấy thông tin playlist
     useEffect(() => {
@@ -94,12 +120,15 @@ export default function MePlaylistIdPage() {
                     // Lấy video đầu tiên nếu có
                     if (playlistData.videos && playlistData.videos.length > 0) {
                         const firstVideo = playlistData.videos[0];
-                        setCurrentVideoId(firstVideo.id.toString());
+                        const firstVideoId = firstVideo.id.toString();
                         
-                        // Lấy thông tin chi tiết video đầu tiên
-                        const videoDetail = await getVideoDetail(firstVideo.id.toString());
-                        if (videoDetail && !('error' in videoDetail)) {
-                            setVideo(videoDetail);
+                        // Kiểm tra hash hiện tại
+                        const currentHash = window.location.hash.replace("#", "");
+                        if (currentHash && playlistData.videos.some(v => v.id.toString() === currentHash)) {
+                            setCurrentVideoId(currentHash);
+                        } else {
+                            setCurrentVideoId(firstVideoId);
+                            window.location.hash = `#${firstVideoId}`;
                         }
                     }
                 }
@@ -110,121 +139,38 @@ export default function MePlaylistIdPage() {
         
         fetchPlaylist();
     }, [id]);
-    
-    // Lắng nghe hash trên URL để lấy videoId
+
+    // Lắng nghe hash change events
     useEffect(() => {
-        function handleHashChange() {
-            const hash = window.location.hash.replace("#", "");
-            console.log('hash', hash);
-            // Kiểm tra xem videoId có tồn tại trong playlist không
-            if (playlist && hash) {
-                const videoExists = playlist.videos?.some(v => v.id.toString() === hash);
-                if (videoExists) {
-                    setCurrentVideoId(hash);
-                } else {
-                    // Nếu videoId không tồn tại, set về video đầu tiên
-                    const firstVideoId = playlist.videos?.[0]?.id?.toString();
-                    if (firstVideoId) {
-                        window.location.hash = `#${firstVideoId}`;
-                        setCurrentVideoId(firstVideoId);
-                    }
-                }
-            } else {
-                setCurrentVideoId(hash || null);
-            }
-        }
-        
-        // Lắng nghe cả hashchange và popstate events
         window.addEventListener("hashchange", handleHashChange);
         window.addEventListener("popstate", handleHashChange);
-        
-        // Lấy hash lần đầu khi load trang
-        handleHashChange();
-        console.log('playlist', playlist);
         
         return () => {
             window.removeEventListener("hashchange", handleHashChange);
             window.removeEventListener("popstate", handleHashChange);
         };
-    }, []);
+    }, [handleHashChange]);
 
-    // Kiểm tra thay đổi hash mỗi 100ms để bắt các thay đổi không trigger events
+    // Khi currentVideoId thay đổi, lấy video tương ứng
     useEffect(() => {
-        let lastHash = window.location.hash;
-        
-        const checkHashChange = () => {
-            const currentHash = window.location.hash;
-            if (currentHash !== lastHash) {
-                console.log('Hash changed from', lastHash, 'to', currentHash);
-                lastHash = currentHash;
-                const hash = currentHash.replace("#", "");
-                
-                if (playlist && hash) {
-                    const videoExists = playlist.videos?.some(v => v.id.toString() === hash);
-                    if (videoExists) {
-                        setCurrentVideoId(hash);
-                    }
+        if (currentVideoId) {
+            console.log('Loading video details for:', currentVideoId);
+            getVideoDetail(currentVideoId).then((res) => {
+                if (res && !('error' in res)) {
+                    setVideo(res);
+                } else {
+                    setVideo(null);
                 }
-            }
-        };
-
-        const interval = setInterval(checkHashChange, 100);
-        
-        return () => clearInterval(interval);
-    }, []);
-
-    // Lắng nghe thay đổi URL (bao gồm cả hash) mà không reload trang
-    useEffect(() => {
-        const handleUrlChange = () => {
-            const hash = window.location.hash.replace("#", "");
-            console.log('URL changed, new hash:', hash);
-            if (playlist && hash) {
-                const videoExists = playlist.videos?.some(v => v.id.toString() === hash);
-                if (videoExists) {
-                    setCurrentVideoId(hash);
-                }
-            }
-        };
-
-        // Sử dụng MutationObserver để lắng nghe thay đổi URL
-        const observer = new MutationObserver(handleUrlChange);
-        observer.observe(document, { subtree: true, childList: true });
-
-        // Cũng lắng nghe sự kiện popstate
-        window.addEventListener('popstate', handleUrlChange);
-
-        return () => {
-            observer.disconnect();
-            window.removeEventListener('popstate', handleUrlChange);
-        };
-    }, [pathname]);
-
-    // Khi playlist hoặc currentVideoId thay đổi, lấy video tương ứng
-    useEffect(() => {
-        if (playlist) {
-            let videoId: string | null = currentVideoId;
-            if (!videoId) {
-                videoId = playlist.videos?.[0]?.id?.toString() ?? null;
-                // Nếu không có hash, set hash về video đầu tiên
-                if (videoId) {
-                    window.location.hash = `#${videoId}`;
-                    setCurrentVideoId(videoId);
-                }
-            }
-            if (videoId) {
-                getVideoDetail(videoId).then((res) => {
-                    if (res && !('error' in res)) {
-                        setVideo(res);
-                    } else {
-                        setVideo(null);
-                    }
-                });
-            }
-
-            setRelatedVideos(playlist.videos || []);
+            });
         }
     }, [currentVideoId]);
-    console.log('relatedVideos', relatedVideos);
+
+    // Cập nhật relatedVideos khi playlist thay đổi
+    useEffect(() => {
+        if (playlist) {
+            setRelatedVideos(playlist.videos || []);
+        }
+    }, [playlist]);
     
     return (
         <div>
@@ -249,6 +195,7 @@ export default function MePlaylistIdPage() {
                             playlistId={Number(id)}
                             onDeleteVideo={handleDeleteVideo}
                             onMoveVideo={handleMoveVideo}
+                            onVideoChange={handleVideoChange}
                             currentVideoId={currentVideoId}
                         />
                     </aside>
@@ -256,6 +203,4 @@ export default function MePlaylistIdPage() {
             </div>
         </div>
     )
-    
-    
 }

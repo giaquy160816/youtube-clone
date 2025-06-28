@@ -1,6 +1,5 @@
 'use client';
 import type { videoSmall } from '@/types/video';
-import Link from "next/link";
 import getFullPath from "@/lib/utils/get-full-path";
 import Image from "next/image";
 import { MoreVertical, Trash2, MoveUp, MoveDown } from "lucide-react";
@@ -17,6 +16,7 @@ type Props = {
     playlistId: number;
     onDeleteVideo?: (videoId: number) => void;
     onMoveVideo?: (videoId: number, direction: 'up' | 'down') => void;
+    onVideoChange?: (videoId: string) => void;
 };
 
 export function RelatedVideoListPlaylist({ 
@@ -24,6 +24,7 @@ export function RelatedVideoListPlaylist({
     playlistId, 
     onDeleteVideo, 
     onMoveVideo, 
+    onVideoChange,
     currentVideoId 
 }: Props & { currentVideoId?: string | null }) {
     return (
@@ -37,8 +38,10 @@ export function RelatedVideoListPlaylist({
                             isActive ? 'bg-primary/80 text-primary-foreground' : ''
                         }`}
                     >
-                        <Link href={`/me/playlist/${playlistId}#${video.id}`}
-                        className="cursor-pointer transform hover:scale-105 transition w-full h-full object-cover rounded flex flex-row flex-1 p-2">
+                        <div 
+                            onClick={() => onVideoChange?.(video.id.toString())}
+                            className="cursor-pointer transform hover:scale-105 transition w-full h-full object-cover rounded flex flex-row flex-1 p-2"
+                        >
                             <div className="relative rounded-lg w-[100px] aspect-[16/9]">
                                 <Image
                                     src={getFullPath(video.image) || ''}
@@ -52,7 +55,7 @@ export function RelatedVideoListPlaylist({
                             <div className="pl-2 flex-1 w-full truncate text-sm overflow-hidden text-ellipsis whitespace-nowrap">
                                 {video.title}
                             </div>
-                        </Link>
+                        </div>
                         
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
