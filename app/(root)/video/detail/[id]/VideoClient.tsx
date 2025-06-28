@@ -54,7 +54,7 @@ export default function VideoClient({
     };
 
     const downloadFile = () => {
-        const videoPath = video ? (getFullPath(video.path).includes('_hls/playlist.m3u8')? getFullPath(video.path).replace('_hls/playlist.m3u8','.mp4') :getFullPath(video.path).replace('.m3u8','.mp4')): '';
+        const videoPath = video ? (getFullPath(video.path).endsWith('_hls/playlist.m3u8')? getFullPath(video.path).replace('_hls/playlist.m3u8','.mp4') :getFullPath(video.path).replace('.m3u8','.mp4')): '';
         const fileName = videoPath ?videoPath.split('/').pop() || 'downloaded-file.mp4': 'downloaded-file.mp4';
         const link = document.createElement('a');
         link.href = videoPath ? getFullPath(videoPath) : '';

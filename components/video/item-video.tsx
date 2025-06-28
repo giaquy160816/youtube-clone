@@ -51,8 +51,9 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
     const [isHovered, setIsHovered] = useState(false);
     const [isPlayerReady, setIsPlayerReady] = useState(false);
     const [showPlayer, setShowPlayer] = useState(false);
-    
+    const isPlayable = video.path?.endsWith('.m3u8');
     const handleMouseEnter = () => {
+        if (!isPlayable) return;
         setIsHovered(true);
         setShowPlayer(true); // bắt đầu load player
     };
@@ -78,7 +79,7 @@ export default function VideoCard({ video }: { video: VideoResponse }) {
                         className={`object-cover w-full h-full absolute inset-0 transition-opacity duration-300 ${isHovered && isPlayerReady ? 'opacity-0' : 'opacity-100'}`}
                         loading="lazy"
                     />
-                    {showPlayer && (
+                    {isPlayable && showPlayer && (
                         <div className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${isHovered && isPlayerReady ? 'opacity-100' : 'opacity-0'
                             }`}>
                             <ReactPlayer
