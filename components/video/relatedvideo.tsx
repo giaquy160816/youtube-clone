@@ -13,7 +13,6 @@ import {
 
 type Props = {
     videos: videoSmall[];
-    playlistId: number;
     onDeleteVideo?: (videoId: number) => void;
     onMoveVideo?: (videoId: number, direction: 'up' | 'down') => void;
     onVideoChange?: (videoId: string) => void;
@@ -21,7 +20,6 @@ type Props = {
 
 export function RelatedVideoListPlaylist({ 
     videos, 
-    playlistId, 
     onDeleteVideo, 
     onMoveVideo, 
     onVideoChange,

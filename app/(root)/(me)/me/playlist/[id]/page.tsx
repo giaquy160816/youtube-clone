@@ -1,5 +1,5 @@
 'use client';
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { usePlaylist } from "@/lib/hooks/usePlaylist";
 import { useEffect, useState, useCallback } from "react";
 import { Playlist } from "@/types/api";
@@ -11,7 +11,6 @@ import { RelatedVideoListPlaylist } from "@/components/video/relatedvideo";
 
 export default function MePlaylistIdPage() {
     const { id } = useParams();
-    const pathname = usePathname();
     const { getPlaylistDetail, deleteVideoFromPlaylist } = usePlaylist();
     const [video, setVideo] = useState<VideoDetail | null>(null);
     const [playlist, setPlaylist] = useState<Playlist | null>(null);
@@ -192,7 +191,6 @@ export default function MePlaylistIdPage() {
                         <div className="font-semibold text-lg mb-3">Danh sách</div>
                         <RelatedVideoListPlaylist 
                             videos={relatedVideos} 
-                            playlistId={Number(id)}
                             onDeleteVideo={handleDeleteVideo}
                             onMoveVideo={handleMoveVideo}
                             onVideoChange={handleVideoChange}
