@@ -65,10 +65,10 @@ export default function VideoClient({
 
         const checkWatched = async () => {
             try {
-                const resCKW = await api(API_ENDPOINTS.user.video.checkWatched(id), { method: 'GET' }) as { isWatched: boolean };
-                if (resCKW?.isWatched === false) {
+                //const resCKW = await api(API_ENDPOINTS.user.video.checkWatched(id), { method: 'GET' }) as { isWatched: boolean };
+               // if (resCKW?.isWatched === false) {
                     sendWatched();
-                }
+               // }
             } catch (err) {
                 console.warn('Không kiểm tra được watched:', err);
             }
