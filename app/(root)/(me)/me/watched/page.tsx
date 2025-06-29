@@ -19,6 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 type VideoItem = {
     id: number;
+    watched_at: string;
     title: string;
     image: string;
 };
@@ -75,7 +76,7 @@ export default function MeWatchedPage() {
     };
 
     const hasNext = page * limit < total;
-
+    console.log('Videos:', videos);
     return (
         <div className="p-6 space-y-6">
             <div className="flex items-center justify-between">
@@ -97,8 +98,8 @@ export default function MeWatchedPage() {
                     <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700 text-sm">
                         <thead className="bg-zinc-100 dark:bg-zinc-800">
                             <tr>
-                                <th className="px-4 py-3 text-left font-medium uppercase w-[70px]">ID</th>
                                 <th className="px-4 py-3 text-left font-medium uppercase">Tiêu đề</th>
+                                <th className="px-4 py-3 text-left font-medium uppercase w-[250px]">Ngày</th>
                                 <th className="px-4 py-3 text-left font-medium uppercase w-[150px]">Hình ảnh</th>
                                 <th className="px-4 py-3 text-center font-medium uppercase w-[150px]">Thao tác</th>
                             </tr>
@@ -107,7 +108,7 @@ export default function MeWatchedPage() {
                             {loading ? (
                                 Array.from({ length: limit }).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td className="px-4 py-3"><Skeleton className="h-4 w-8" /></td>
+                                        <td className="px-4 py-3"><Skeleton className="h-4 w-[120px]" /></td>
                                         <td className="px-4 py-3"><Skeleton className="h-4 w-[120px]" /></td>
                                         <td className="px-4 py-3"><Skeleton className="h-[45px] w-[80px] rounded" /></td>
                                         <td className="px-4 py-3"><Skeleton className="h-4 w-[100px]" /></td>
@@ -116,8 +117,8 @@ export default function MeWatchedPage() {
                             ) : (
                                 videos.map((video) => (
                                     <tr key={video.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
-                                        <td className="px-4 py-2">{video.id}</td>
                                         <td className="px-4 py-2">{video.title}</td>
+                                        <td className="px-4 py-2">{new Date(video.watched_at).toLocaleString()}</td>
                                         <td className="px-4 py-2 relative">
                                             <div className="relative h-full aspect-[16/9]">
                                                 <Image
