@@ -77,8 +77,8 @@ export default function VideoManagePage() {
     const hasNext = page * limit < total;
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="lg:p-6 lg:space-y-6">
+            <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-semibold">Quản lý Video</h1>
                 <Link href={PATH.ME.VIDEO_POST}>
                     <Button size="sm" className="rounded-xl">+ Thêm Video</Button>
@@ -88,7 +88,8 @@ export default function VideoManagePage() {
                 <Spinner />
             ) : total > 0 ? (
                 <>
-                    <div className="overflow-x-auto rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-900">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-900">
                         <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700 text-sm">
                             <thead className="bg-zinc-100 dark:bg-zinc-800">
                                 <tr>
@@ -156,6 +157,50 @@ export default function VideoManagePage() {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-4">
+                        {videos.map((video) => (
+                            <div key={video.id} className="bg-white dark:bg-zinc-900 rounded-lg border dark:border-zinc-700 p-4">
+                                <div className="flex gap-4">
+                                    <div className="relative h-20 w-32 flex-shrink-0">
+                                        <Image
+                                            src={getFullPath(video.image)}
+                                            alt={video.title}
+                                            fill
+                                            className="rounded object-cover border"
+                                        />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-xs text-zinc-500 dark:text-zinc-400">ID: {video.id}</span>
+                                        </div>
+                                        <h3 className="font-medium text-sm line-clamp-2 mb-3">{video.title}</h3>
+                                        <div className="flex gap-2">
+                                            <Link href={PATH.ME.VIDEO_EDIT((video.id))}>
+                                                <Button size="sm" variant="outline" className="text-xs">
+                                                    <Pencil className="h-3 w-3" />
+                                                </Button>
+                                            </Link>
+                                            <Link href={PATH.VIDEO_DETAIL(video.id)}>
+                                                <Button size="sm" variant="secondary" className="text-xs">
+                                                    <Eye className="h-3 w-3" />
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                className="text-xs"
+                                                onClick={() => handleDelete(video.id.toString())}
+                                            >
+                                                <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                     {showPagination && (
                         <div className="flex justify-center gap-4 mt-4">
