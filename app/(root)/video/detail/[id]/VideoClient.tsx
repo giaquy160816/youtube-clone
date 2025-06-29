@@ -14,6 +14,8 @@ import { RelatedVideoItemOnPlayer } from '@/components/video/item-video';
 import { useRouter } from 'next/navigation';
 import GroupButton from './GroupButton';
 import PlaylistDialog from './PlaylistDialog';
+import { useVideoLike } from '@/lib/hooks/useVideoLike';
+import { downloadVideoFile } from '@/lib/utils/video';
 
 export default function VideoClient({
     id,
@@ -25,7 +27,7 @@ export default function VideoClient({
     relatedVideos: VideoResponse[] | null;
 }) {
     const rawAuth = useIsAuthenticated();
-    const [isLiked, setIsLiked] = useState(false);
+    const { isLiked, handleLike } = useVideoLike({ videoId: id });
     const [showOverlay, setShowOverlay] = useState(false);
     const router = useRouter();
     const playerRef = useRef<ReactPlayer>(null);
@@ -54,25 +56,13 @@ export default function VideoClient({
     };
 
     const downloadFile = () => {
-        const videoPath = video ? (getFullPath(video.path).endsWith('_hls/playlist.m3u8')? getFullPath(video.path).replace('_hls/playlist.m3u8','.mp4') :getFullPath(video.path).replace('.m3u8','.mp4')): '';
-        const fileName = videoPath ?videoPath.split('/').pop() || 'downloaded-file.mp4': 'downloaded-file.mp4';
-        const link = document.createElement('a');
-        link.href = videoPath ? getFullPath(videoPath) : '';
-        link.download = fileName;
-        link.click();
+        if (video?.path) {
+            downloadVideoFile(video.path);
+        }
     };
     
     useEffect(() => {
         if (!video || !rawAuth) return;
-
-        const checkLike = async () => {
-            try {
-                const res = await api(API_ENDPOINTS.user.video.checkLike(id), { method: 'GET' }) as { isLiked: boolean };
-                setIsLiked(res?.isLiked || false);
-            } catch (err) {
-                console.warn('Không kiểm tra được like:', err);
-            }
-        };
 
         const checkWatched = async () => {
             try {
@@ -93,7 +83,6 @@ export default function VideoClient({
             }
         };
         checkWatched();
-        checkLike();
     }, [id, video, rawAuth]);
 
     if (!video) return <div className="p-4 text-red-500">Không tìm thấy video</div>;
@@ -223,20 +212,4 @@ export default function VideoClient({
             />
         </div>
     );
-
-    async function handleLike() {
-        try {
-            if (isLiked) {
-                await api(API_ENDPOINTS.user.video.dislike(id), { method: 'DELETE' });
-                setIsLiked(false);
-                toast.error('Bạn đã bỏ thích video này!');
-                return;
-            }
-            await api(API_ENDPOINTS.user.video.like, { method: 'POST' }, { video_id: parseInt(id) });
-            setIsLiked(true);
-            toast.success('Bạn đã thích video này!');
-        } catch (error) {
-            console.error('Error liking video:', error);
-        }
-    }
 }

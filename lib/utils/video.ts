@@ -12,7 +12,7 @@ export function downloadVideoFile(videoPath: string): void {
     }
 
     // Chuyển đổi đường dẫn từ HLS stream sang MP4 file
-    const convertedPath = videoPath.includes('_hls/playlist.m3u8') 
+    const convertedPath = videoPath.endsWith('_hls/playlist.m3u8') 
         ? videoPath.replace('_hls/playlist.m3u8', '.mp4')
         : videoPath.replace('.m3u8', '.mp4');
 
