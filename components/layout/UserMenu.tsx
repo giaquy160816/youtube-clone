@@ -17,9 +17,16 @@ import getFullPath from "@/lib/utils/get-full-path";
 export function UserMenu() {
     const { user } = useUser();
 
+    const handleLoginClick = () => {
+        // Lưu URL hiện tại để redirect về sau khi login
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('return_url', window.location.href);
+        }
+    };
+
     if (!user) {
         return (
-            <Link href={PATH.LOGIN}>
+            <Link href={PATH.LOGIN} onClick={handleLoginClick}>
                 <Avatar className="cursor-pointer">
                     <AvatarFallback>?</AvatarFallback>
                 </Avatar>

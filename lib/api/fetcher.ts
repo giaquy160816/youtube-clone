@@ -39,7 +39,7 @@ export async function api<TResponse = unknown, TRequest = unknown>(
         // Tạo URL hợp lệ sử dụng utility function
         const url = createApiUrl(encryptedEndpoint);
         
-        console.log('🌐 Fetching URL:', url);
+        // console.log('🌐 Fetching URL:', url);
         
         // Sử dụng proxy API để ẩn backend URL
         const res = await fetch(url, {

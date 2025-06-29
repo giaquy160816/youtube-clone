@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { api } from '@/lib/api/fetcher';
-import { useLoginHandler } from './useLoginHandler';
+import { useTokenStorage } from './useTokenStorage';
 import type { AuthResponse } from '@/types/auth';
 import { notify } from '../utils/noti';
 
 export function useAuthCleaner() {
-    const handleLogin = useLoginHandler();
+    const storeToken = useTokenStorage();
 
     useEffect(() => {
         let stopped = false;
@@ -28,7 +28,6 @@ export function useAuthCleaner() {
                 Cookies.remove('user_info');
 
                 try {
-                    console.log('refreshToken');
                     const response = await api<AuthResponse>(
                         API_ENDPOINTS.auth.refreshToken,
                         {
@@ -38,7 +37,7 @@ export function useAuthCleaner() {
                     );
 
                     if ('accessToken' in response && 'user' in response) {
-                        await handleLogin(response as AuthResponse);
+                        await storeToken(response as AuthResponse);
                         return;
                     }
                 } catch (error) {
@@ -51,7 +50,7 @@ export function useAuthCleaner() {
         };
 
         checkAndClean();
-        const interval = setInterval(checkAndClean, 30 *1000); // mỗi 1 giây
+        const interval = setInterval(checkAndClean, 30 *1000); // mỗi 30 giây
         return () => clearInterval(interval);
-    }, [handleLogin]);
+    }, [storeToken]);
 }

@@ -1,14 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
-import { PATH } from '@/lib/constants/paths';
 import { UserInfo } from '@/types/auth';
 import { useUser } from '@/lib/context/UserContext';
 
-export function useLoginHandler() {
-    const router = useRouter();
+export function useTokenStorage() {
     const { setUser } = useUser();
 
     return async (data: {
@@ -37,13 +34,6 @@ export function useLoginHandler() {
         // Dispatch custom event to notify other components
         window.dispatchEvent(new CustomEvent('cookieChange'));
 
-        // Kiểm tra xem có return URL không
-        const returnUrl = sessionStorage.getItem('return_url');
-        if (returnUrl) {
-            sessionStorage.removeItem('return_url');
-            router.push(returnUrl);
-        } else {
-            router.push(PATH.HOME);
-        }
+        console.log('✅ Token refreshed successfully');
     };
-}
+} 

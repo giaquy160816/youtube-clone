@@ -5,6 +5,9 @@ import Image from 'next/image';
 import type { VideoDetail, videoSmall } from '@/types/video';
 import getFullPath from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
+import GroupButtonSmall from './GroupButtonSmall';
+import { useVideoLike } from '@/lib/hooks/useVideoLike';
+import { downloadVideoFile } from '@/lib/utils/video';
 
 export default function VideoClient({
     id,
@@ -19,6 +22,7 @@ export default function VideoClient({
     currentVideoId?: string | null;
     onVideoChange?: (videoId: string) => void;
 }) {
+    const { isLiked, handleLike } = useVideoLike({ videoId: id });
     const playerRef = useRef<ReactPlayer>(null);
     const [isPlaying, setIsPlaying] = useState(true);
     const description = video ? video.description : null;
@@ -53,6 +57,12 @@ export default function VideoClient({
     
     const handlePlay = () => {
         setIsPlaying(true);
+    };
+
+    const downloadFile = () => {
+        if (video?.path) {
+            downloadVideoFile(video.path);
+        }
     };
 
     // Tự động play video khi chuyển sang video mới
@@ -96,6 +106,12 @@ export default function VideoClient({
                             <div className="text-sm text-muted-foreground mb-2">
                                 {video.views?.toLocaleString()} lượt xem • {video.createdAt}
                             </div>
+                            <GroupButtonSmall
+                                video={video}
+                                isLiked={isLiked}
+                                handleLike={handleLike}
+                                downloadFile={downloadFile}
+                            />
                         </div>
                     </div>
                     {/* Description Block */}

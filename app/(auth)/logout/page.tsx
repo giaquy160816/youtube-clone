@@ -6,9 +6,11 @@ import Cookies from 'js-cookie';
 import { PATH } from '@/lib/constants/paths';
 import { apiPost } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
+import { useUser } from '@/lib/context/UserContext';
 
 export default function LogoutPage() {
     const router = useRouter();
+    const { setUser } = useUser();
 
     useEffect(() => {
         const doLogout = async () => {
@@ -24,11 +26,17 @@ export default function LogoutPage() {
             Cookies.remove('access_token'); // chỉ xóa cookie frontend
             Cookies.remove('user_info');
 
+            // Update UserContext
+            setUser(null);
+
+            // Dispatch custom event to notify other components
+            window.dispatchEvent(new CustomEvent('cookieChange'));
+
             router.replace(PATH.LOGIN);
         };
 
         doLogout();
-    }, [router]);
+    }, [router, setUser]);
 
     return <p>Đang đăng xuất...</p>;
 }

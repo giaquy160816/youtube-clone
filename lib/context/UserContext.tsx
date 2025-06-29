@@ -17,8 +17,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<UserInfo | null>(null);
 
     useEffect(() => {
-        const raw = localStorage.getItem('user_info');
-        if (raw) setUser(JSON.parse(raw));
+        const loadUserFromStorage = () => {
+            const raw = localStorage.getItem('user_info');
+            if (raw) {
+                try {
+                    setUser(JSON.parse(raw));
+                } catch (error) {
+                    console.error('Error parsing user info:', error);
+                }
+            }
+        };
+
+        // Load user info on mount
+        loadUserFromStorage();
     }, []);
 
     return (
