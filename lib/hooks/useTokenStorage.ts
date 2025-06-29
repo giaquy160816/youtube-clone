@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import Cookies from 'js-cookie';
 import { UserInfo } from '@/types/auth';
 import { useUser } from '@/lib/context/UserContext';
-import { calculateExpiryTime } from '../utils/auth';
 
 export function useTokenStorage() {
     const { setUser } = useUser();

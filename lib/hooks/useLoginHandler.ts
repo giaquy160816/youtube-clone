@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 import { PATH } from '@/lib/constants/paths';
 import { UserInfo } from '@/types/auth';
 import { useUser } from '@/lib/context/UserContext';
-import { calculateExpiryTime } from '../utils/auth';
 
 export function useLoginHandler() {
     const router = useRouter();

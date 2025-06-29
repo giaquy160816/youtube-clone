@@ -11,7 +11,6 @@ export function isTokenExpiringSoon(): boolean {
     const now = Date.now();
     const timeUntilExpiry = expired - now;
     const thirtySeconds = 50 * 1000; // 30 giây
-    console.log('expired', expired, now, timeUntilExpiry, thirtySeconds);
     return timeUntilExpiry <= thirtySeconds;
 }
 /**
@@ -46,7 +45,6 @@ export function getTokenTimeRemaining(): number {
 export function isUserLoggedIn(): boolean {
     const accessToken = Cookies.get('access_token');
     if (!accessToken) return false;
-    
     return !isTokenExpired();
 }
 

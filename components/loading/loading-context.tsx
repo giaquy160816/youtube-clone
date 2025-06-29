@@ -4,6 +4,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import GlobalLoading from '@/components/loading/global-loading';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const LoadingContext = createContext<{
     show: (msg?: string) => void;
@@ -27,7 +28,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const handleAuthExpired = () => {
-            window.alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!');
+            toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!');
             router.push('/login');
         };
         window.addEventListener('authExpired', handleAuthExpired);
