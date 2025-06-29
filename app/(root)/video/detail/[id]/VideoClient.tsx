@@ -117,7 +117,7 @@ export default function VideoClient({
                     {showOverlay && relatedVideos && (
                         <div className="absolute inset-0 bg-[#000000]/90 flex flex-col h-full w-full text-white justify-center ">
                             <div className="flex-1 w-full flex items-center justify-center p-4 hidden md:block">
-                                <div className="grid grid-cols-2 flex-1 grid-rows-2 gap-4 w-full h-full max-w-2xl">
+                                <div className="grid grid-cols-2 flex-1 grid-rows-2 gap-4 w-full h-full">
                                     {relatedVideos.slice(0, 4).map((video) => (
                                         <div key={video.id} className="flex flex-col h-full min-h-0 bg-transparent">
                                             <RelatedVideoItemOnPlayer video={video} />
