@@ -2,8 +2,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useIsAuthenticated } from "@/lib/hooks/useIsAuthenticated";
 import { useAuthRedirect } from "@/lib/hooks/useAuthRedirect";
-import { ThumbsUp, Share2, BookmarkPlus, Download, Ellipsis } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { ThumbsUp, Share2, Download } from "lucide-react";
 import { VideoDetail } from "@/types/video";
 
 export default function GroupButtonSmall(

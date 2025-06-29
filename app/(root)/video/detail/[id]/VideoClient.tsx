@@ -6,7 +6,6 @@ import type { VideoDetail, VideoResponse } from '@/types/video';
 import getFullPath from '@/lib/utils/get-full-path';
 import ReactPlayer from 'react-player/lazy';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import { useIsAuthenticated } from '@/lib/hooks/useIsAuthenticated';
 import { api } from '@/lib/api/fetcher';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
