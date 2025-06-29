@@ -110,7 +110,7 @@ export default function PlaylistDialog({ open, onOpenChange, videoId }: Playlist
                     toast.success('Đã xóa video khỏi playlist!');
                 }
             }
-        } catch (error) {
+        } catch  {
             // Rollback nếu có lỗi
             if (checked) {
                 setPlaylistsOfVideo(prev => prev.filter(id => id !== playlistId));

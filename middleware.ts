@@ -54,7 +54,7 @@ export function middleware(request: NextRequest) {
 
     // Xử lý authentication cho các routes khác
     if (match(path, guestOnlyRoutes) && accessToken) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL('/', request.url));
     }
 
     if (match(path, protectedRoutes) && !accessToken) {
@@ -67,7 +67,7 @@ export function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         '/me/:path*',
-        '/dashboard/:path*',
+        '/:path*',
         '/profile/:path*',
         '/settings/:path*',
         '/video/post/:path*',

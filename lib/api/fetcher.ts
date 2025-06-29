@@ -4,9 +4,10 @@ import { SecurityUtils } from '@/lib/utils/security';
 import { createApiUrl } from '@/lib/utils/url';
 import { clearAuthData } from '@/lib/utils/auth';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
+import type { AuthResponse } from '@/types/auth';
 
 let isRefreshing = false;
-let refreshPromise: Promise<any> | null = null;
+let refreshPromise: Promise<AuthResponse> | null = null;
 
 async function refreshToken() {
     // Gọi refresh token qua proxy API
@@ -135,9 +136,9 @@ export async function api<TResponse = unknown, TRequest = unknown>(
             }
             throw new Error(data?.message || res.statusText || 'Request failed');
         }
-
         return data as TResponse;
-    } catch (error) {
+    } catch (error: unknown) {
+        console.log('error', error);
         throw new Error((error as Error).message || 'Unexpected error occurred');
     }
 }

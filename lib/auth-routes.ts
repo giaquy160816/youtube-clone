@@ -2,7 +2,7 @@
 // file: lib/auth-routes.ts
 
 export const protectedRoutes = [
-    "/dashboard",
+    // "/dashboard",
     "/account",
     "/profile",
     "/backend", // prefix toàn bộ group

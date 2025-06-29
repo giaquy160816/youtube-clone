@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { useEffect } from "react";
 import SidebarSearch from "./SidebarSearch";
+import { usePathname } from 'next/navigation';
 
 export function Sidebar({
     isOpen = false,
@@ -19,6 +20,7 @@ export function Sidebar({
     isOpen?: boolean;
     onClose?: () => void;
 }) {
+    const pathname = usePathname();
     // ESC để đóng sidebar
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
@@ -27,6 +29,9 @@ export function Sidebar({
         document.addEventListener('keydown', handleKey);
         return () => document.removeEventListener('keydown', handleKey);
     }, [onClose]);
+
+    const linkClass = (href: string) =>
+        `flex items-center gap-3 px-3 py-2 rounded hover:bg-muted ${pathname === href ? 'bg-muted font-semibold text-primary' : ''}`;
 
     return (
         <aside
@@ -55,7 +60,7 @@ export function Sidebar({
 
 
             <div className="space-y-1">
-                <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.HOME} className={linkClass(PATH.HOME)}>
                     <Home size={18} /> Trang chủ
                 </Link>
                 {/* <Link href={PATH.HOME} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
@@ -67,16 +72,16 @@ export function Sidebar({
 
             <div className="text-sm text-muted-foreground px-3">Bạn</div>
             <div className="space-y-1">
-                <Link href={PATH.ME.VIDEO_MANAGE} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.ME.VIDEO_MANAGE} className={linkClass(PATH.ME.VIDEO_MANAGE)}>
                     <Video size={18} /> Video của bạn
                 </Link>
-                <Link href={PATH.ME.VIDEO_WATCHED} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.ME.VIDEO_WATCHED} className={linkClass(PATH.ME.VIDEO_WATCHED)}>
                     <Clock size={18} /> Video đã xem
                 </Link>
-                <Link href={PATH.ME.VIDEO_PLAYLIST} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.ME.VIDEO_PLAYLIST} className={linkClass(PATH.ME.VIDEO_PLAYLIST)}>
                     <ListVideo size={18} /> Danh sách phát
                 </Link>
-                <Link href={PATH.ME.VIDEO_LIKED} className="flex items-center gap-3 px-3 py-2 rounded hover:bg-muted">
+                <Link href={PATH.ME.VIDEO_LIKED} className={linkClass(PATH.ME.VIDEO_LIKED)}>
                     <ThumbsUp size={18} /> Video đã thích
                 </Link>
             </div>
