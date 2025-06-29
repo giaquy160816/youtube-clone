@@ -19,7 +19,6 @@ export default function MePlaylistIdPage() {
     
     // Hàm xử lý khi chuyển sang video khác
     const handleVideoChange = useCallback((videoId: string) => {
-        console.log('handleVideoChange called with:', videoId);
         setCurrentVideoId(videoId);
         // Cập nhật hash mà không reload trang
         if (window.location.hash !== `#${videoId}`) {
@@ -35,11 +34,7 @@ export default function MePlaylistIdPage() {
             try {
                 const updatedVideos = playlist.videos?.filter(v => v.id !== videoId) || [];
                 setPlaylist({ ...playlist, videos: updatedVideos });
-                console.log('playlistid', id, 'videoId', videoId);
-                
                 deleteVideoFromPlaylist(id as string, videoId.toString());
-                
-                // Nếu video bị xóa là video hiện tại, chuyển sang video đầu tiên
                 if (currentVideoId === videoId.toString()) {
                     const firstVideo = updatedVideos[0];
                     if (firstVideo) {
@@ -74,10 +69,6 @@ export default function MePlaylistIdPage() {
         [videos[currentIndex], videos[newIndex]] = [videos[newIndex], videos[currentIndex]];
         
         try {
-            // TODO: Gọi API để cập nhật thứ tự video trong playlist
-            console.log('Di chuyển video', videoId, direction, 'trong playlist', playlist.id);
-            
-            // Cập nhật UI
             setPlaylist({ ...playlist, videos });
         } catch (error) {
             console.error('Lỗi khi di chuyển video:', error);
@@ -87,8 +78,6 @@ export default function MePlaylistIdPage() {
     // Hàm xử lý hash change
     const handleHashChange = useCallback(() => {
         const hash = window.location.hash.replace("#", "");
-        console.log('Hash changed to:', hash);
-        
         if (playlist && hash) {
             const videoExists = playlist.videos?.some(v => v.id.toString() === hash);
             if (videoExists) {
@@ -153,7 +142,6 @@ export default function MePlaylistIdPage() {
     // Khi currentVideoId thay đổi, lấy video tương ứng
     useEffect(() => {
         if (currentVideoId) {
-            console.log('Loading video details for:', currentVideoId);
             getVideoDetail(currentVideoId).then((res) => {
                 if (res && !('error' in res)) {
                     setVideo(res);
@@ -173,7 +161,7 @@ export default function MePlaylistIdPage() {
     
     return (
         <div>
-            <div className="p-6 space-y-6">
+            <div className="lg:p-6 space-y-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-semibold">Video trong playlist: {playlist?.name}</h1>
                 </div>

@@ -63,9 +63,6 @@ async function handleProxyRequest(
             targetUrl = `${BACKEND_BASE_URL}${decodedPath}${queryString}`;
         }
         
-        console.log('🌐 Proxy request:', `${method} ${path} → ${targetUrl}`);
-        
-        // Lấy body và kiểm tra có phải là FormData không
         let body: BodyInit | null = null;
         let isFormData = false;
         if (method !== 'GET' && method !== 'HEAD') {

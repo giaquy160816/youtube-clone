@@ -118,7 +118,6 @@ export default function PlaylistDialog({ open, onOpenChange, videoId }: Playlist
                 setPlaylistsOfVideo(prev => [...prev, playlistId]);
             }
             toast.error('Có lỗi xảy ra!');
-            console.log('error', error);
         }
     };
 

@@ -67,10 +67,7 @@ export default function MeWatchedPage() {
                 toast.error(res?.error || 'Xoá video thất bại');
                 return;
             }
-            console.log(res.message);
-            
             toast.success(res.message || 'Xoá video thành công!');
-            // Reload lại dữ liệu video sau khi xoá
             window.location.reload();
         } catch (error) {
             console.error(error);

@@ -1,33 +1,41 @@
 'use client';
 
 import { useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { API_ENDPOINTS } from '@/lib/api/end-points';
 import { api } from '@/lib/api/fetcher';
 import { useTokenStorage } from './useTokenStorage';
 import type { AuthResponse } from '@/types/auth';
 import { notify } from '../utils/noti';
+import { 
+    isTokenExpiringSoon, 
+    isTokenExpired, 
+    clearAuthData,
+    isUserLoggedIn as isUserLoggedInAuth
+} from '../utils/auth';
+
+function isUserLoggedIn(): boolean {
+    if (typeof window === 'undefined') return false;
+    const accessToken = document.cookie.includes('access_token=');
+    const userInfo = localStorage.getItem('user_info');
+    return !!accessToken && !!userInfo;
+}
 
 export function useAuthCleaner() {
     const storeToken = useTokenStorage();
 
     useEffect(() => {
         let stopped = false;
+        let interval: NodeJS.Timeout | number | undefined;
 
         const checkAndClean = async () => {
             if (stopped) return;
-            const accessToken = Cookies.get('access_token');
-            const expired = parseInt(localStorage.getItem('user_expired') || '0', 10);
-
-            if (!accessToken || !expired) return;
-            if (Date.now() > expired) {
-                localStorage.removeItem('user_info');
-                localStorage.removeItem('user_expired');
-
-                Cookies.remove('access_token');
-                Cookies.remove('user_info');
-
+            // Kiểm tra login trước khi gọi refresh
+            if (!isUserLoggedIn()) return;
+            // Kiểm tra xem token có sắp hết hạn trong 30 giây tới không
+            if (isTokenExpiringSoon()) {
                 try {
+                    console.log('refresh token');
+                    console.log('refresh token link', API_ENDPOINTS.auth.refreshToken);
                     const response = await api<AuthResponse>(
                         API_ENDPOINTS.auth.refreshToken,
                         {
@@ -43,14 +51,21 @@ export function useAuthCleaner() {
                 } catch (error) {
                     console.warn('⚠️ Refresh token failed:', error);
                     notify.error('Refresh token failed');
+                    // Nếu refresh thất bại và token đã hết hạn, xóa token
+                    if (isTokenExpired()) {
+                        clearAuthData();
+                        stopped = true;
+                    }
                 }
-
-                stopped = true;
             }
         };
 
-        checkAndClean();
-        const interval = setInterval(checkAndClean, 30 *1000); // mỗi 30 giây
-        return () => clearInterval(interval);
+        if (isUserLoggedIn()) {
+            checkAndClean();
+            interval = setInterval(checkAndClean, 10 * 1000); // mỗi 30 giây
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
     }, [storeToken]);
 }

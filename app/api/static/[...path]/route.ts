@@ -21,9 +21,6 @@ export async function GET(
             targetUrl = `${BACKEND_BASE_URL}/${path}${queryString}`;
         }
         
-        console.log('📁 Static file request:', `${path} → ${targetUrl}`);
-        
-        // Thực hiện request đến backend
         const response = await fetch(targetUrl, {
             method: 'GET',
             credentials: 'include',

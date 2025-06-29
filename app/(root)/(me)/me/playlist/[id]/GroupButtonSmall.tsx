@@ -57,7 +57,7 @@ export default function GroupButtonSmall(
                 variant="ghost"
                 size="sm"
                 onClick={downloadFile}
-                className="flex items-center gap-1 border-[black] border-1 border-solid hover:bg-[black] sm:flex hidden"
+                className="flex items-center gap-1 border-[black] border-1 border-solid hover:bg-[black]"
             >
                 <Download className="w-4 h-4" />
                 <span className="md:block hidden">Tải xuống</span>

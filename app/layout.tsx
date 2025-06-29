@@ -12,8 +12,6 @@ export const viewport: Viewport = {
     initialScale: 1,
     maximumScale: 1,
     userScalable: false,
-    // Also supported but less commonly used
-    // interactiveWidget: 'resizes-visual',
 }
 export const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),

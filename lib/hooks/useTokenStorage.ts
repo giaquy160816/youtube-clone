@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import Cookies from 'js-cookie';
 import { UserInfo } from '@/types/auth';
 import { useUser } from '@/lib/context/UserContext';
+import { calculateExpiryTime } from '../utils/auth';
 
 export function useTokenStorage() {
     const { setUser } = useUser();
@@ -20,13 +21,13 @@ export function useTokenStorage() {
             return;
         }
 
-        // Store in localStorage
+        // Lưu trực tiếp expiredAt (đã là mili giây)
         localStorage.setItem('user_info', JSON.stringify(user));
         localStorage.setItem('user_expired', expiredAt.toString());
 
         // Store in cookies
-        Cookies.set('access_token', accessToken, { expires: expiredAt / 86400 }); // Convert seconds to days
-        Cookies.set('user_info', JSON.stringify(user), { expires: expiredAt / 86400 });
+        Cookies.set('access_token', accessToken, { expires: expiredAt / 86400 / 1000 }); // Convert ms to days
+        Cookies.set('user_info', JSON.stringify(user), { expires: expiredAt / 86400 / 1000 });
 
         // Update UserContext
         setUser(user);

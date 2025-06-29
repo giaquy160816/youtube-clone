@@ -2,6 +2,33 @@
 
 import { SecurityUtils } from '@/lib/utils/security';
 import { createApiUrl } from '@/lib/utils/url';
+import { clearAuthData } from '@/lib/utils/auth';
+import { API_ENDPOINTS } from '@/lib/api/end-points';
+
+let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
+
+async function refreshToken() {
+    // Gọi refresh token qua proxy API
+    const encryptedEndpoint = SecurityUtils.encryptEndpoint(API_ENDPOINTS.auth.refreshToken);
+    const url = createApiUrl(encryptedEndpoint);
+    const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Refresh token failed');
+    const data = await res.json();
+    if (!data.accessToken || !data.user) throw new Error('Refresh token failed');
+    // Lưu lại token mới
+    localStorage.setItem('user_info', JSON.stringify(data.user));
+    const expiredAt = data.expiresIn || 3600;
+    const expiryTime = Date.now() + expiredAt * 1000;
+    localStorage.setItem('user_expired', expiryTime.toString());
+    document.cookie = `access_token=${data.accessToken}; path=/;`;
+    document.cookie = `user_info=${encodeURIComponent(JSON.stringify(data.user))}; path=/;`;
+    window.dispatchEvent(new CustomEvent('cookieChange'));
+    return data;
+}
 
 function getAccessTokenFromCookie(): string | null {
     if (typeof document === 'undefined') return null; // SSR guard
@@ -17,7 +44,8 @@ function getAccessTokenFromCookie(): string | null {
 export async function api<TResponse = unknown, TRequest = unknown>(
     endpoint: string,
     options: RequestInit = {},
-    body?: TRequest
+    body?: TRequest,
+    _retry = false
 ): Promise<TResponse | { error: string }> {
     const token = getAccessTokenFromCookie();
     
@@ -54,6 +82,31 @@ export async function api<TResponse = unknown, TRequest = unknown>(
                 : undefined,
         });
 
+        if (res.status === 401 || res.status === 403) {
+            // Nếu chưa thử refresh, thử refresh token
+            if (!_retry) {
+                if (!isRefreshing) {
+                    isRefreshing = true;
+                    refreshPromise = refreshToken();
+                }
+                try {
+                    await refreshPromise;
+                    isRefreshing = false;
+                    refreshPromise = null;
+                    // Retry lại request gốc với token mới
+                    return await api(endpoint, options, body, true);
+                } catch {
+                    isRefreshing = false;
+                    refreshPromise = null;
+                    clearAuthData();
+                    throw new Error('Token Expired');
+                }
+            } else {
+                clearAuthData();
+                throw new Error('Token Expired');
+            }
+        }
+
         if (res.status === 204) return {} as TResponse;
         
         const contentType = res.headers.get('content-type');
@@ -62,6 +115,24 @@ export async function api<TResponse = unknown, TRequest = unknown>(
         const data = isJson ? await res.json() : null;
 
         if (!res.ok) {
+            // Nếu backend trả về lỗi Token Expired
+            if ((data?.message === 'Token Expired' || data?.error === 'Token Expired') && !_retry) {
+                if (!isRefreshing) {
+                    isRefreshing = true;
+                    refreshPromise = refreshToken();
+                }
+                try {
+                    await refreshPromise;
+                    isRefreshing = false;
+                    refreshPromise = null;
+                    return await api(endpoint, options, body, true);
+                } catch {
+                    isRefreshing = false;
+                    refreshPromise = null;
+                    clearAuthData();
+                    throw new Error('Token Expired');
+                }
+            }
             throw new Error(data?.message || res.statusText || 'Request failed');
         }
 
